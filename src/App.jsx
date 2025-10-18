@@ -5,6 +5,7 @@ import Footer from "./components/Footer.jsx";
 import Home from "./pages/Home.jsx";
 import Categorias from "./pages/Categorias.jsx";
 import Productos from "./pages/Productos.jsx";
+import DetalleProducto from './pages/DetalleProducto';
 import Nosotros from "./pages/Nosotros.jsx";
 import Admin from "./admin/Admin.jsx";
 
@@ -21,6 +22,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/categorias' element={<Categorias />} />
         <Route path='/productos' element={<Productos />} />
+        <Route path="/productos/:id" element={<DetalleProducto />} />
         <Route path='/nosotros' element={<Nosotros />} />
         <Route path="/admin" element={<Admin />} />
         
