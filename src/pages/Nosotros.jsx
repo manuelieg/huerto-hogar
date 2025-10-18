@@ -3,7 +3,7 @@ import React from 'react';
 function Nosotros() {
     return (
         <div className="container my-5">
-            <h2 className="mb-4 text-center">Enunciado</h2>
+            <h2 className="mb-4 text-center">¿Qué es HuertoHogar?</h2>
             <p>
                 HuertoHogar es una tienda online dedicada a llevar la frescura y calidad de los productos del campo 
                 directamente a la puerta de nuestros clientes en Chile. Con más de 6 años de experiencia, operamos 
