@@ -1,12 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const categorias = [
-  { id: "FR", nombre: "Frutas Frescas", link: "/productos?categoria=FR", imagen: "/images/frutas.jpg" },
-  { id: "VR", nombre: "Verduras Orgánicas", link: "/productos?categoria=VR", imagen: "/images/verduras.jpg" },
-  { id: "PO", nombre: "Productos Orgánicos", link: "/productos?categoria=PO", imagen: "/images/productos.jpg" },
-  { id: "PL", nombre: "Productos Lácteos", link: "/productos?categoria=PL", imagen: "/images/lacteos.jpg" },
-];
+import { categorias } from '../data/categorias.js'; // 👈 importamos el JSON
 
 const Categorias = () => {
   return (
@@ -33,6 +27,7 @@ const Categorias = () => {
                 </div>
                 <div className="card-body text-center">
                   <h5 className="fw-bold text-dark">{cat.nombre}</h5>
+                  <p className="text-muted small">{cat.descripcion.slice(0, 100)}...</p>
                 </div>
               </div>
             </Link>
@@ -44,3 +39,4 @@ const Categorias = () => {
 };
 
 export default Categorias;
+

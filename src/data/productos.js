@@ -68,7 +68,7 @@ export const productos = [
         imagen: "/images/miel.png",
         nombre: "Miel Orgánica",
         categoria: "Productos Orgánicos",
-        descripcion: "Pimientos rojos, amarillos y verdes, ideales para salteados y platos coloridos. Ricos en antioxidantes y vitaminas, estos pimientos añaden un toque vibrante y saludable a cualquier receta.",
+        descripcion: "Miel pura y orgánica producida por apicultores locales. Rica en antioxidantes y con un sabor inigualable, perfecta para endulzar de manera natural tus comidas y bebidas. ",
         precio: 5000,
         stock: 50,
     },
