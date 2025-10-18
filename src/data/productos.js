@@ -1,47 +1,52 @@
-const productos = [
+export const productos = [
     {
         id: "FR001",
-        imagen: " ",
+        imagen: "/images/manzana.png",
         nombre: "Manzana Fuji",
         categoria: "Frutas Frescas",
         descripcion: "Manzanas Fuji crujientes y dulces, cultivadas en el Valle del Maule. Perfectas para meriendas saludables o como ingrediente en postres. Estas manzanas son conocidas por su textura firme y su sabor equilibrado entre dulce y ácido.",
         precio: 1200,
         stock: 150,
-        link: " "
     },
     {
         id: "FR002",
-        imagen: " ",
+        imagen: "/images/naranja.png",
         nombre: "Naranjas Valencia",
         categoria: "Frutas Frescas",
         descripcion: "Jugosas y ricas en vitamina C, estas naranjas Valencia son ideales para zumos frescos y refrescantes. Cultivadas en condiciones climáticas óptimas que aseguran su dulzura y jugosidad.",
         precio: 1000,
         stock: 200,
-        link: " "
     },
     {
         id: "FR003",
-        imagen: " ",
+        imagen: "/images/banana.png",
         nombre: "Plátanos Cavendish ",
         categoria: "Frutas Frescas",
         descripcion: "Plátanos maduros y dulces, perfectos para el desayuno o como snack energético. Estos plátanos son ricos en potasio y vitaminas, ideales para mantener una dieta equilibrada. ",
         precio: 800,
         stock: 250,
-        link: " "
+    },
+    {
+        id: "FR004", 
+        imagen:"/images/quinoa.jpg",
+        nombre: 'Tomates Cherry', 
+        categoria: 'Frutas Frescas',
+        precio: 2500, 
+        stock: 50,
+        descripcion_corta: 'Pequeños y dulces, perfectos para ensaladas.',
     },
     {
         id: "VR001",
-        imagen: " ",
+        imagen: "/images/zanahoria.png",
         nombre: "Zanahorias Orgánicas",
         categoria: "Verduras Orgánicas",
         descripcion: "Zanahorias crujientes cultivadas sin pesticidas en la Región de O'Higgins. Excelente fuente de vitamina A y fibra, ideales para ensaladas, jugos o como snack saludable.",
         precio: 900,
         stock: 100,
-        link: " "
     },
     {
         id: "VR002",
-        imagen: " ",
+        imagen: "/images/espinaca.png",
         nombre: "Espinacas Frescas",
         categoria: "Verduras Orgánicas",
         descripcion: "Espinacas frescas y nutritivas, perfectas para ensaladas y batidos verdes. Estas espinacas son cultivadas bajo prácticas orgánicas que garantizan su calidad y valor nutricional.",
@@ -51,32 +56,32 @@ const productos = [
     },
     {
         id: "VR003",
-        imagen: "",
-        nombre: "Espinacas Frescas",
-        categoria: "Pimientos Tricolores",
+        imagen: "/images/pimenton.png",
+        nombre: "Pimientos",
+        categoria: "Verduras Orgánicas",
         descripcion: "Pimientos rojos, amarillos y verdes, ideales para salteados y platos coloridos. Ricos en antioxidantes y vitaminas, estos pimientos añaden un toque vibrante y saludable a cualquier receta.",
         precio: 1500,
         stock: 120,
-        link: " "
     },
     {
         id: "PO001",
-        imagen: "",
+        imagen: "/images/miel.png",
         nombre: "Miel Orgánica",
         categoria: "Productos Orgánicos",
         descripcion: "Pimientos rojos, amarillos y verdes, ideales para salteados y platos coloridos. Ricos en antioxidantes y vitaminas, estos pimientos añaden un toque vibrante y saludable a cualquier receta.",
         precio: 5000,
         stock: 50,
-        link: " "
     },
     {
         id: "PL001",
-        imagen: "",
+        imagen: "/images/cajadeleche.jpg",
         nombre: "Leche Entera",
         categoria: "Productos Lácteos",
         descripcion: " ",
         precio: 1000,
         stock: 100,
-        link: " "
     },
 ];
+export const getAllProducts = () => {
+    return productos;
+};
