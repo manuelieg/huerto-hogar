@@ -1,18 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
-const categorias = [
-  { id: "FR", nombre: "Frutas Frescas", link: "/productos?categoria=FR" },
-  { id: "VR", nombre: "Verduras Orgánicas", link: "/productos?categoria=VR" },
-  { id: "PO", nombre: "Productos Orgánicos", link: "/productos?categoria=PO" },
-  { id: "PL", nombre: "Productos Lácteos", link: "/productos?categoria=PL" },
-];
+import { categorias } from '../data/categorias.js'; // 👈 tu JSON
 
 const Header = () => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
   return (
     <header className="shadow-sm">
 
-      {/* Barra superior: Logo, buscador y botones */}
+      {/* Barra superior */}
       <div className="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div className="container-fluid">
           <Link to="/" className="navbar-brand fs-4 fw-bold text-dark me-5">
@@ -43,7 +41,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Barra inferior: Links de navegación */}
+      {/* Barra inferior */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid justify-content-center">
           <ul className="navbar-nav">
@@ -52,22 +50,24 @@ const Header = () => {
               <Link to="/" className="nav-link">Home</Link>
             </li>
 
-            {/* Dropdown Categorías */}
+            {/* Dropdown Categorías sincronizado con JSON */}
             <li className="nav-item dropdown">
-              <Link
-                to="/productos"
+              <span
                 className="nav-link dropdown-toggle"
-                id="categoriasDropdown"
                 role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+                onClick={toggleDropdown}
+                style={{ cursor: 'pointer' }}
               >
                 Categorías
-              </Link>
-              <ul className="dropdown-menu" aria-labelledby="categoriasDropdown">
+              </span>
+              <ul className={`dropdown-menu${dropdownOpen ? ' show' : ''}`}>
                 {categorias.map(cat => (
                   <li key={cat.id}>
-                    <Link className="dropdown-item" to={cat.link}>
+                    <Link
+                      className="dropdown-item"
+                      to={cat.link}
+                      onClick={() => setDropdownOpen(false)}
+                    >
                       {cat.nombre}
                     </Link>
                   </li>
@@ -90,6 +90,7 @@ const Header = () => {
             <li className="nav-item">
               <Link to="/contacto" className="nav-link">Contacto</Link>
             </li>
+
           </ul>
         </div>
       </nav>
