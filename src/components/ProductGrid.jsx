@@ -1,29 +1,72 @@
-import React from 'react';
-import ProductCard from './ProductCard.jsx'; 
-import { getAllProducts } from '../data/productos.js'; 
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-const ProductGrid = () => {
-    
-    const productos = getAllProducts() || []; 
-    
-    if (productos.length === 0) {
-        return (
-            <div className="alert alert-info text-center mt-5" role="alert">
-                No se encontraron productos disponibles en este momento.
-            </div>
-        );
+const ProductGrid = ({ productos }) => {
+  const [carrito, setCarrito] = useState(
+    JSON.parse(localStorage.getItem('carrito')) || []
+  );
+
+  const handleAddToCart = (producto, cantidad) => {
+    if (cantidad < 1) return;
+
+    const copiaCarrito = [...carrito];
+    const existente = copiaCarrito.find(item => item.id === producto.id);
+
+    if (existente) {
+      existente.cantidad += cantidad;
+    } else {
+      copiaCarrito.push({ ...producto, cantidad });
     }
 
-    return (
-        <div className="row justify-content-center px-2"> 
-            <div className="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-5 g-4">
-                
-                {productos.map(producto => (
-                    <ProductCard key={producto.id} producto={producto} />
-                ))}
+    setCarrito(copiaCarrito);
+    localStorage.setItem('carrito', JSON.stringify(copiaCarrito));
+    alert(`${cantidad} x ${producto.nombre} agregado(s) al carrito`);
+  };
+
+  return (
+    <div className="row">
+      {productos.map(producto => (
+        <div key={producto.id} className="col-6 col-md-3 mb-4">
+          <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+            <figure style={{ height: '200px', overflow: 'hidden' }} className="d-flex justify-content-center align-items-center p-3">
+              <Link to={`/productos/${producto.id}`} className="w-100 h-100 d-flex justify-content-center align-items-center">
+                <img 
+                  src={producto.imagen || '/images/placeholder.png'}
+                  alt={producto.nombre} 
+                  className="img-fluid w-100 h-100"
+                  style={{ objectFit: 'contain' }}
+                />
+              </Link>
+            </figure>
+
+            <div className="card-body d-flex flex-column text-center pt-0 px-3 pb-2">
+              <h5 className="fw-bold mb-1">{producto.nombre}</h5>
+              <p className="text-success fw-bolder mb-2">{producto.precio.toLocaleString('es-CL')} /Kg</p>
+              <p className="text-muted small flex-grow-1">{producto.descripcion}</p>
+
+              <div className="d-flex justify-content-center align-items-center gap-2 mt-auto">
+                <input 
+                  type="number" 
+                  min={1} 
+                  defaultValue={1} 
+                  className="form-control form-control-sm text-center" 
+                  style={{ width: '60px' }}
+                  onChange={(e) => producto.cantidadTemp = Math.max(1, Number(e.target.value))}
+                />
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => handleAddToCart(producto, producto.cantidadTemp || 1)}
+                >
+                  Añadir
+                </button>
+              </div>
             </div>
+          </div>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 export default ProductGrid;
+

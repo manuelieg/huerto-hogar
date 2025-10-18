@@ -1,6 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const categorias = [
+  { id: "FR", nombre: "Frutas Frescas", link: "/productos?categoria=FR" },
+  { id: "VR", nombre: "Verduras Orgánicas", link: "/productos?categoria=VR" },
+  { id: "PO", nombre: "Productos Orgánicos", link: "/productos?categoria=PO" },
+  { id: "PL", nombre: "Productos Lácteos", link: "/productos?categoria=PL" },
+];
+
 const Header = () => {
   return (
     <header className="shadow-sm">
@@ -40,9 +47,34 @@ const Header = () => {
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid justify-content-center">
           <ul className="navbar-nav">
+
             <li className="nav-item">
               <Link to="/" className="nav-link">Home</Link>
             </li>
+
+            {/* Dropdown Categorías */}
+            <li className="nav-item dropdown">
+              <Link
+                to="/productos"
+                className="nav-link dropdown-toggle"
+                id="categoriasDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Categorías
+              </Link>
+              <ul className="dropdown-menu" aria-labelledby="categoriasDropdown">
+                {categorias.map(cat => (
+                  <li key={cat.id}>
+                    <Link className="dropdown-item" to={cat.link}>
+                      {cat.nombre}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+
             <li className="nav-item">
               <Link to="/productos" className="nav-link">Productos</Link>
             </li>
@@ -66,3 +98,4 @@ const Header = () => {
 };
 
 export default Header;
+
