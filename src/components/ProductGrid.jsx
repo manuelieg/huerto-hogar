@@ -1,81 +1,37 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+// ⬅️ CRÍTICO: Debe existir en la misma carpeta
+import ProductCard from './ProductCard.jsx'; 
 
-const ProductGrid = ({ productos }) => {
-  const [carrito, setCarrito] = useState(
-    JSON.parse(localStorage.getItem('carrito')) || []
-  );
-
-  const handleAddToCart = (producto, cantidad) => {
-    if (cantidad < 1) return;
-
-    const copiaCarrito = [...carrito];
-    const existente = copiaCarrito.find(item => item.id === producto.id);
-
-    if (existente) {
-      existente.cantidad += cantidad;
-    } else {
-      copiaCarrito.push({ ...producto, cantidad });
+// ⬅️ CRÍTICO: Recibe la lista de productos a mostrar y la función del carrito
+const ProductGrid = ({ productos, onAddToCart }) => { 
+    
+    // Usamos el array de productos recibido, si es null o undefined, usa un array vacío.
+    const itemsToRender = productos || []; 
+    
+    if (itemsToRender.length === 0) {
+        return (
+            <div className="alert alert-warning text-center mt-5" role="alert">
+                No se encontraron productos que coincidan con su búsqueda o categoría.
+            </div>
+        );
     }
 
-    setCarrito(copiaCarrito);
-    localStorage.setItem('carrito', JSON.stringify(copiaCarrito));
-    alert(`${cantidad} x ${producto.nombre} agregado(s) al carrito`);
-  };
-
-  return (
-    <div className="row">
-      {productos.map(producto => (
-        <div key={producto.id} className="col-6 col-md-3 mb-4">
-          <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
-            {/* Imagen clickeable al detalle */}
-            <Link to={`/productos/${producto.id}`} className="text-decoration-none">
-              <figure
-                style={{ height: '200px', overflow: 'hidden' }}
-                className="d-flex justify-content-center align-items-center p-3 mb-0"
-              >
-                <img
-                  src={producto.imagen || '/images/placeholder.png'}
-                  alt={producto.nombre}
-                  className="img-fluid w-100 h-100"
-                  style={{ objectFit: 'contain' }}
-                />
-              </figure>
-            </Link>
-
-            <div className="card-body d-flex flex-column text-center pt-2 px-3 pb-2">
-              {/* Nombre clickeable al detalle */}
-              <Link to={`/productos/${producto.id}`} className="text-decoration-none text-dark">
-                <h5 className="fw-bold mb-1">{producto.nombre}</h5>
-              </Link>
-
-              <p className="text-success fw-bolder mb-2">{producto.precio.toLocaleString('es-CL')} /Kg</p>
-              <p className="text-muted small flex-grow-1">{producto.descripcion}</p>
-
-              <div className="d-flex justify-content-center align-items-center gap-2 mt-auto">
-                <input
-                  type="number"
-                  min={1}
-                  defaultValue={1}
-                  className="form-control form-control-sm text-center"
-                  style={{ width: '60px' }}
-                  onChange={(e) => producto.cantidadTemp = Math.max(1, Number(e.target.value))}
-                />
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleAddToCart(producto, producto.cantidadTemp || 1)}
-                >
-                  Añadir
-                </button>
-              </div>
+    return (
+        <div className="row justify-content-center px-2"> 
+            {/* El grid responsivo con espaciado (g-4) */}
+            <div className="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-5 g-4">
+                
+                {itemsToRender.map(producto => (
+                    // ⬅️ CRÍTICO: Pasar la función de estado global (onAddToCart) a cada tarjeta
+                    <ProductCard 
+                        key={producto.id} 
+                        producto={producto} 
+                        onAddToCart={onAddToCart} // Propagación
+                    />
+                ))}
             </div>
-          </div>
         </div>
-      ))}
-    </div>
-  );
+    );
 };
 
 export default ProductGrid;
-
-

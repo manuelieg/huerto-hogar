@@ -1,37 +1,32 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const ProductCard = ({ producto }) => {
-    const [cantidad, setCantidad] = useState(1);
+const ProductCard = ({ producto, onAddToCart }) => { 
+    const [cantidad, setCantidad] = useState(1); 
 
     const FormatoPrecio = (price) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(price);
     };
 
-    // Agregar al carrito
     const AgregarAlCarrito = () => {
-        if (cantidad < 1) return;
-
-        const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-        const productoExistente = carrito.find(item => item.id === producto.id);
-
-        if (productoExistente) {
-            productoExistente.cantidad += cantidad;
-        } else {
-            carrito.push({ ...producto, cantidad });
+        if (cantidad < 1 || cantidad > producto.stock) {
+            console.error("Cantidad inválida o fuera de stock.");
+            return;
         }
 
-        localStorage.setItem('carrito', JSON.stringify(carrito));
-        alert(`${cantidad} x ${producto.nombre} agregado(s) al carrito`);
+        if (onAddToCart) {
+            onAddToCart(producto, cantidad); 
+            console.log(`[Carrito OK] ${cantidad} x ${producto.nombre} agregado(s) al carrito.`);
+        }
     };
-
+    
     const imgSrc = producto.imagen || '/images/placeholder.png';
 
     return (
         <div className="col mb-4">
             <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
                 
-                {/* Imagen */}
+                {/* Imagen y Enlace */}
                 <figure style={{ height: '200px', overflow: 'hidden' }} className="d-flex justify-content-center align-items-center p-3">
                     <Link to={`/productos/${producto.id}`} className="w-100 h-100 d-flex justify-content-center align-items-center">
                         <img 
@@ -54,7 +49,6 @@ const ProductCard = ({ producto }) => {
 
                     <p className="text-muted small flex-grow-1">{producto.descripcion}</p>
 
-                    {/* Selector de cantidad y botón */}
                     <div className="d-flex justify-content-center align-items-center gap-2 mt-auto">
                         <input
                             type="number"
@@ -68,19 +62,19 @@ const ProductCard = ({ producto }) => {
 
                         <button
                             onClick={AgregarAlCarrito}
-                            className="btn btn-primary d-flex align-items-center"
+                            className="btn btn-primary d-flex align-items-center rounded-1"
                         >
                             <i className="bi bi-cart me-1"></i> Añadir
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
     );
 };
 
 export default ProductCard;
+
 
 
 
