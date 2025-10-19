@@ -1,17 +1,13 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-// ⬅️ Importamos la función para obtener un solo artículo por ID
 import { getArticleById } from '../data/blog.js'; 
 
 const DetalleBlog = () => {
     
-    // 1. Obtener el ID del artículo de la URL
     const { id } = useParams();
     
-    // 2. Buscar el artículo
     const article = getArticleById(id);
 
-    // 3. Manejar artículo no encontrado
     if (!article) {
         return (
             <div className="container mt-5 pt-5 text-center">
@@ -32,7 +28,6 @@ const DetalleBlog = () => {
     return (
         <div className="container my-5" style={{ maxWidth: '900px' }}>
             
-            {/* Breadcrumb / Navegación */}
             <nav aria-label="breadcrumb" className="mb-4">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item"><Link to="/blog" className="text-decoration-none">Blog</Link></li>
@@ -42,15 +37,12 @@ const DetalleBlog = () => {
 
             <article className="card shadow-lg border-0 rounded-3 p-4 p-md-5">
                 
-                {/* Título Principal */}
                 <h1 className="fw-bolder mb-3">{article.title}</h1>
                 
-                {/* Metadatos */}
                 <p className="small text-muted mb-4 border-bottom pb-3">
                     Publicado por <strong>{article.author}</strong> el {formatDate(article.date)}
                 </p>
 
-                {/* Imagen Destacada */}
                 <img 
                     src={article.image || '/images/blog/default.jpg'} 
                     alt={article.title} 
@@ -58,10 +50,8 @@ const DetalleBlog = () => {
                     style={{ maxHeight: '400px', objectFit: 'cover' }}
                 />
 
-                {/* Contenido del Artículo */}
                 <div 
                     className="blog-content lead" 
-                    // ⬅️ CRÍTICO: Inyecta el contenido HTML/Texto de tu JSON de forma segura
                     dangerouslySetInnerHTML={{ __html: article.content }} 
                 />
                 

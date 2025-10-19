@@ -1,11 +1,9 @@
 import React from 'react';
 import BlogCard from '../components/BlogCard.jsx';
-// ⬅️ Importamos la función de la fuente de datos
 import { getAllArticles } from '../data/blog.js'; 
 
 const Blog = () => {
     
-    // Obtenemos todos los artículos
     const articles = getAllArticles() || [];
 
     if (articles.length === 0) {
@@ -23,10 +21,8 @@ const Blog = () => {
                 Consejos, guías y recetas para una vida más fresca y natural.
             </p>
 
-            {/* Cuadrícula de Artículos (Usa BlogCard) */}
             <div className="row g-4 justify-content-center">
                 {articles.map(article => (
-                    // El componente BlogCard maneja el diseño individual de la tarjeta
                     <BlogCard key={article.id} article={article} />
                 ))}
             </div>
