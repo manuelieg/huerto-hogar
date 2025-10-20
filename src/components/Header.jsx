@@ -15,7 +15,7 @@ const Header = ({ cartCount = 0 }) => {
     return (
         <header className="shadow-sm">
 
-            <div className="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div className="navbar navbar-expand-lg navbar-light navbar-top border-bottom">
                 <div className="container-fluid">
                     <Link to="/" className="navbar-brand fs-4 fw-bold text-dark me-5">
                         Huerto Hogar
@@ -47,7 +47,7 @@ const Header = ({ cartCount = 0 }) => {
                 </div>
             </div>
 
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav className="navbar navbar-expand-lg navbar-dark navbar-bottom">
                 <div className="container-fluid justify-content-center">
                     <ul className="navbar-nav">
 

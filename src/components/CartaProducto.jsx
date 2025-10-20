@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCarrito } from '../context/CarritoManager.jsx'; 
+import { usarCarrito } from '../context/GestionCarrito.jsx'; 
 
-const ProductCard = ({ producto }) => { 
+const CartaProducto = ({ producto }) => { 
+    
     const [cantidad, setCantidad] = useState(1); 
     
-    const { handleAddToCart } = useCarrito();
+    const { agregarAlCarrito } = usarCarrito();
 
     const FormatoPrecio = (price) => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(price);
@@ -17,11 +18,11 @@ const ProductCard = ({ producto }) => {
             return;
         }
 
-        handleAddToCart(producto, cantidad);
+        agregarAlCarrito(producto, cantidad);
         console.log(`[Carrito OK] ${cantidad} x ${producto.nombre} agregado(s) al carrito.`);
     };
     
-    const imgSrc = producto.imagen || '/images/placeholder.png';
+    const rutaImagen = producto.imagen || '/images/placeholder.png';
     const stockDisponible = producto.stock || 0;
 
     return (
@@ -31,7 +32,7 @@ const ProductCard = ({ producto }) => {
                 <figure style={{ height: '200px', overflow: 'hidden' }} className="d-flex justify-content-center align-items-center p-3">
                     <Link to={`/productos/${producto.id}`} className="w-100 h-100 d-flex justify-content-center align-items-center">
                         <img 
-                            src={imgSrc} 
+                            src={rutaImagen} 
                             alt={producto.nombre} 
                             className="tab-image img-fluid"
                             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
@@ -77,7 +78,7 @@ const ProductCard = ({ producto }) => {
     );
 };
 
-export default ProductCard;
+export default CartaProducto;
 
 
 
