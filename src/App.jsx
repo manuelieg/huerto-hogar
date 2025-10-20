@@ -21,6 +21,7 @@ import Admin from "./admin/Admin.jsx";
 import AdminProductos from './admin/AdminProductos.jsx';
 import AdminCategorias from './admin/AdminCategorias.jsx';
 import AdminUsuarios from './admin/AdminUsuarios.jsx';
+import AdminOrdenes from './admin/AdminOrdenes.jsx';
 
 const ProtectedRoute = ({ children }) => {
     const { estaAutenticado } = usarAutenticacion();
@@ -65,6 +66,7 @@ const AppRoutes = () => {
                     <Route path="/admin/productos" element={<ProtectedRoute><Admin><AdminProductos /></Admin></ProtectedRoute>} />
                     <Route path="/admin/categorias" element={<ProtectedRoute><Admin><AdminCategorias /></Admin></ProtectedRoute>} />
                     <Route path="/admin/usuarios" element={<ProtectedRoute><Admin><AdminUsuarios /></Admin></ProtectedRoute>} />
+                    <Route path="/admin/ordenes" element={<ProtectedRoute><Admin><AdminOrdenes /></Admin></ProtectedRoute>} />
                 </Routes>
             </main>
 

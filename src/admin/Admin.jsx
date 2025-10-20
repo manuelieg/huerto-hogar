@@ -3,6 +3,7 @@ import AdminHeader from "../components/AdminHeader.jsx";
 import AdminBarra from "../components/AdminBarra.jsx";
 import { productos as productosIniciales } from "../data/productos.js";
 import { usuarios as usuariosIniciales } from "../data/usuarios.js";
+import { ordenes } from "../data/ordenes.js"; 
 
 function Admin({ children }) {
   const [productos, setProductos] = useState(() => {
@@ -14,6 +15,8 @@ function Admin({ children }) {
     const guardado = localStorage.getItem("usuarios");
     return guardado ? JSON.parse(guardado) : usuariosIniciales;
   });
+  
+  const [ordenesState, setOrdenesState] = useState(ordenes);
 
   return (
     <div className="admin-container">
@@ -36,7 +39,7 @@ function Admin({ children }) {
                     <div className="card card-custom text-center">
                       <div className="card-body">
                         <h5 className="card-title">Compras</h5>
-                        <p className="card-text fs-3">120</p>
+                        <p className="card-text fs-3">{ordenesState.length}</p>
                       </div>
                     </div>
                   </div>
