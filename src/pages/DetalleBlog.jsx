@@ -19,7 +19,6 @@ const DetalleBlog = () => {
         );
     }
 
-    // 4. Formatear la fecha
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('es-ES', options);

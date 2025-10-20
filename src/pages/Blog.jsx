@@ -2,11 +2,11 @@ import React from 'react';
 import BlogCard from '../components/BlogCard.jsx';
 import { getAllArticles } from '../data/blog.js'; 
 
-const Blog = () => {
+function Blog() {
     
-    const articles = getAllArticles() || [];
+    const articulos = getAllArticles() || [];
 
-    if (articles.length === 0) {
+    if (articulos.length === 0) {
         return (
             <div className="container mt-5 pt-5 text-center">
                 <h2 className="text-muted">No hay artículos de blog disponibles.</h2>
@@ -22,8 +22,8 @@ const Blog = () => {
             </p>
 
             <div className="row g-4 justify-content-center">
-                {articles.map(article => (
-                    <BlogCard key={article.id} article={article} />
+                {articulos.map(articulo => (
+                    <BlogCard key={articulo.id} article={articulo} />
                 ))}
             </div>
         </div>

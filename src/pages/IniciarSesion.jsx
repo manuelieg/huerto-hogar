@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthManager.jsx';
+import { usarAutenticacion } from '../context/GestionAutenticacion.jsx';
 
-const Login = () => {
-    const navigate = useNavigate();
-    const { handleLogin } = useAuth();
-    const [usuario, setUsuario] = useState('');
+function IniciarSesion() {
+    const navegar = useNavigate();
+    const { iniciarSesion } = usarAutenticacion();
+    const [nombreUsuario, setNombreUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const manejarEnvio = (e) => {
         e.preventDefault();
         setError('');
 
-        const exito = handleLogin(usuario, contrasena);
+        const exito = iniciarSesion(nombreUsuario, contrasena);
 
         if (exito) {
-            navigate('/admin');
+            navegar('/admin');
         } else {
             setError('Credenciales inválidas. Intenta de nuevo.');
         }
@@ -38,15 +38,15 @@ const Login = () => {
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={manejarEnvio}>
                             <div className="mb-3">
-                                <label htmlFor="usuario" className="form-label">Usuario / Correo</label>
+                                <label htmlFor="nombreUsuario" className="form-label">Usuario / Correo</label>
                                 <input 
                                     type="text" 
                                     className="form-control rounded-1" 
-                                    id="usuario" 
-                                    value={usuario}
-                                    onChange={(e) => setUsuario(e.target.value)}
+                                    id="nombreUsuario" 
+                                    value={nombreUsuario}
+                                    onChange={(e) => setNombreUsuario(e.target.value)}
                                     required 
                                 />
                             </div>
@@ -76,6 +76,6 @@ const Login = () => {
             </div>
         </div>
     );
-};
+}
 
-export default Login;
+export default IniciarSesion;

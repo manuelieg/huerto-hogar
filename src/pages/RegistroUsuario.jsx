@@ -1,36 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { usuarios as usuariosIniciales } from '../data/usuarios.js';
+import { usuarios as usuariosBase } from '../data/usuarios.js';
 
-const Registro = () => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({ nombre: '', apellido: '', email: '', password: '' });
-    const [usuarios, setUsuarios] = useState(() => {
+function RegistroUsuario() {
+    
+    const navegar = useNavigate();
+    
+    const [datosFormulario, setDatosFormulario] = useState({ nombre: '', apellido: '', email: '', password: '' });
+    const [listaUsuarios, setListaUsuarios] = useState(() => {
         const guardado = localStorage.getItem('usuarios');
-        return guardado ? JSON.parse(guardado) : usuariosIniciales;
+        return guardado ? JSON.parse(guardado) : usuariosBase;
     });
 
     useEffect(() => {
-        localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    }, [usuarios]);
+        localStorage.setItem('usuarios', JSON.stringify(listaUsuarios));
+    }, [listaUsuarios]);
 
-    const handleChange = (e) => {
+    const manejarCambio = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setDatosFormulario(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const manejarEnvio = (e) => {
         e.preventDefault();
 
-        const existe = usuarios.find(u => u.email === formData.email);
+        const existe = listaUsuarios.find(u => u.email === datosFormulario.email);
         if (existe) {
-            alert('El correo ya está registrado');
+            alert('El correo ya está registrado.');
             return;
         }
 
-        setUsuarios([...usuarios, { ...formData, id: Date.now() }]);
-        alert('Registro exitoso');
-        navigate('/login');
+        setListaUsuarios([...listaUsuarios, { ...datosFormulario, id: Date.now().toString() }]);
+        alert('Registro exitoso.');
+        navegar('/login');
     };
 
     return (
@@ -40,23 +42,23 @@ const Registro = () => {
                     <div className="card shadow-lg border-0 p-4">
                         <h2 className="text-center fw-bolder mb-4">Crear Cuenta</h2>
 
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={manejarEnvio}>
                             <div className="row g-3">
                                 <div className="col-md-6">
                                     <label htmlFor="nombre" className="form-label">Nombre</label>
-                                    <input type="text" className="form-control" id="nombre" name="nombre" onChange={handleChange} required />
+                                    <input type="text" className="form-control" id="nombre" name="nombre" onChange={manejarCambio} required />
                                 </div>
                                 <div className="col-md-6">
                                     <label htmlFor="apellido" className="form-label">Apellido</label>
-                                    <input type="text" className="form-control" id="apellido" name="apellido" onChange={handleChange} required />
+                                    <input type="text" className="form-control" id="apellido" name="apellido" onChange={manejarCambio} required />
                                 </div>
                                 <div className="col-12">
                                     <label htmlFor="email" className="form-label">Correo Electrónico</label>
-                                    <input type="email" className="form-control" id="email" name="email" onChange={handleChange} required />
+                                    <input type="email" className="form-control" id="email" name="email" onChange={manejarCambio} required />
                                 </div>
                                 <div className="col-12">
                                     <label htmlFor="password" className="form-label">Contraseña</label>
-                                    <input type="password" className="form-control" id="password" name="password" onChange={handleChange} required />
+                                    <input type="password" className="form-control" id="password" name="password" onChange={manejarCambio} required />
                                 </div>
                             </div>
 
@@ -71,6 +73,6 @@ const Registro = () => {
             </div>
         </div>
     );
-};
+}
 
-export default Registro;
+export default RegistroUsuario;

@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productos } from '../data/productos.js'; 
+import { usarCarrito } from '../context/GestionCarrito.jsx';
 
-const DetalleProducto = ({ onAddToCart }) => { 
+function DetalleProducto() { 
     const { id } = useParams(); 
+    const { agregarAlCarrito } = usarCarrito();
     const [cantidad, setCantidad] = useState(1); 
+    
     const producto = productos.find(p => p.id === id);
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(price);
+
+    const formatearPrecio = (precio) => {
+        return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(precio);
     };
 
-    const handleAddToCart = () => {
+    const manejarAgregarAlCarrito = () => {
         if (cantidad < 1 || !producto) return;
 
-        if (onAddToCart) {
-            onAddToCart(producto, cantidad);
+        if (agregarAlCarrito) {
+            agregarAlCarrito(producto, cantidad);
             console.log(`[Detalle] Añadido ${cantidad}x ${producto.nombre} al carrito.`);
         }
     };
@@ -29,7 +33,7 @@ const DetalleProducto = ({ onAddToCart }) => {
         );
     }
     
-    const imgSrc = producto.imagen || '/images/placeholder.png';
+    const rutaImagen = producto.imagen || '/images/placeholder.png';
     const stockDisponible = producto.stock || 0;
 
     return (
@@ -46,7 +50,7 @@ const DetalleProducto = ({ onAddToCart }) => {
                 <div className="col-md-6 col-lg-5">
                     <div className="card shadow-lg border-0 rounded-3 p-4">
                         <img 
-                            src={imgSrc} 
+                            src={rutaImagen} 
                             alt={producto.nombre} 
                             className="img-fluid rounded-3"
                             style={{ maxHeight: '450px', objectFit: 'contain' }}
@@ -59,7 +63,7 @@ const DetalleProducto = ({ onAddToCart }) => {
                     <p className="text-muted fs-5 mb-4">{producto.categoria}</p>
 
                     <div className="d-flex align-items-center mb-4 border-bottom pb-3">
-                        <span className="text-success fw-bolder display-6 me-4">{formatPrice(producto.precio)}/Kg</span>
+                        <span className="text-success fw-bolder display-6 me-4">{formatearPrecio(producto.precio)}/Kg</span>
                         <span className={`badge fs-6 py-2 px-3 ${stockDisponible > 100 ? 'bg-success text-white' : 'bg-warning text-dark'}`}>
                             Stock: {stockDisponible} Kg
                         </span>
@@ -81,7 +85,7 @@ const DetalleProducto = ({ onAddToCart }) => {
                         />
 
                         <button
-                            onClick={handleAddToCart}
+                            onClick={manejarAgregarAlCarrito}
                             className="btn btn-primary btn-lg d-flex align-items-center flex-grow-1"
                             disabled={stockDisponible === 0}
                         >
