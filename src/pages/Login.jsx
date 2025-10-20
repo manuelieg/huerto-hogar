@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthManager.jsx'; 
 
-const Login = ({ onLogin }) => {
+const Login = () => {
     const navigate = useNavigate();
+    const { handleLogin } = useAuth(); 
+    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -11,7 +14,7 @@ const Login = ({ onLogin }) => {
         e.preventDefault();
         setError('');
 
-        const success = onLogin(username, password);
+        const success = handleLogin(username, password); 
 
         if (success) {
             navigate('/admin');
@@ -61,7 +64,7 @@ const Login = ({ onLogin }) => {
                                 />
                             </div>
 
-                            <button type="submit" className="btn btn-primary w-100 rounded-1 py-2 mt-3">
+                            <button type="submit" className="btn btn-primary w-100 rounded-1 py-2 mt-3 fw-bold">
                                 Ingresar
                             </button>
                         </form>
