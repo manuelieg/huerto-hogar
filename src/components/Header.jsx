@@ -1,15 +1,36 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { categorias } from '../data/categorias.js'; 
+import { Link, useNavigate } from 'react-router-dom';
+import { categorias } from '../data/categorias.js';
+import { productos } from '../data/productos.js';
 
-const Header = ({ cartCount = 0 }) => { 
+const Header = ({ cartCount = 0 }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [busqueda, setBusqueda] = useState('');
+    const navigate = useNavigate();
 
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
     const getCartText = (count) => {
         if (count === 0) return "Carrito (Vacío)";
-        return `Carrito (${count} ítem${count !== 1 ? 's' : ''})`; 
+        return `Carrito (${count} ítem${count !== 1 ? 's' : ''})`;
+    };
+
+    const manejarBusqueda = (e) => {
+        e.preventDefault();
+        const texto = busqueda.trim().toLowerCase();
+        if (!texto) return;
+
+        const productoEncontrado = productos.find(
+            p => p.id.toLowerCase() === texto || p.nombre.toLowerCase() === texto
+        );
+
+        if (productoEncontrado) {
+            navigate(`/productos/${productoEncontrado.id}`);
+        } else {
+            alert('No se encontró ningún producto con ese nombre. Inténtelo nuevamente.');
+        }
+
+        setBusqueda('');
     };
 
     return (
@@ -21,22 +42,27 @@ const Header = ({ cartCount = 0 }) => {
                         HuertoHogar
                     </Link>
 
-                    <form className="d-flex mx-auto" role="search" style={{ maxWidth: '400px' }}>
+                    <form 
+                        className="d-flex mx-auto" 
+                        role="search" 
+                        style={{ maxWidth: '400px' }} 
+                        onSubmit={manejarBusqueda}
+                    >
                         <input
                             className="form-control me-2 rounded-1"
                             type="search"
                             placeholder="Buscar productos..."
                             aria-label="Buscar"
+                            value={busqueda}
+                            onChange={(e) => setBusqueda(e.target.value)}
                         />
                         <button className="btn btn-dark rounded-1" type="submit">Buscar</button>
                     </form>
 
                     <div className="d-flex align-items-center">
-                        
                         <Link to="/carrito" className="btn btn-sm btn-success me-3 shadow-sm rounded-1 fw-bold">
                             <i className="bi bi-cart-fill me-1"></i> {getCartText(cartCount)}
                         </Link>
-                        
                         <Link to="/login" className="btn btn-sm btn-outline-primary me-2 rounded-1">
                             Iniciar Sesión
                         </Link>
@@ -50,7 +76,6 @@ const Header = ({ cartCount = 0 }) => {
             <nav className="navbar navbar-expand-lg navbar-dark navbar-bottom">
                 <div className="container-fluid justify-content-center">
                     <ul className="navbar-nav">
-
                         <li className="nav-item">
                             <Link to="/" className="nav-link">Home</Link>
                         </li>
@@ -91,7 +116,6 @@ const Header = ({ cartCount = 0 }) => {
                         <li className="nav-item">
                             <Link to="/contacto" className="nav-link">Contacto</Link>
                         </li>
-
                     </ul>
                 </div>
             </nav>
