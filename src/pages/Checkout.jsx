@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-// ⬅️ Importamos la fuente de datos para leer el stock
+import { useCarrito } from '../context/CarritoManager.jsx';
 import { getAllProducts } from '../data/productos.js'; 
 
-const Checkout = ({ cartItems, onFinalizePurchase }) => {
+const Checkout = () => {
     const navigate = useNavigate();
-    
-    // Estado para manejar los datos del formulario
+
+    const { cartItems, handleFinalizePurchase } = useCarrito(); 
+
+    const allProducts = getAllProducts();
+
     const [formData, setFormData] = useState({
         nombre: '',
         apellidos: '',
@@ -17,12 +20,9 @@ const Checkout = ({ cartItems, onFinalizePurchase }) => {
         indicaciones: ''
     });
 
-    const [stockError, setStockError] = useState(null); // Estado para errores de stock
+    const [stockError, setStockError] = useState(null); 
+    const [formError, setFormError] = useState(null); 
 
-    // Obtener la data más reciente para la validación
-    const allProducts = getAllProducts();
-    
-    // Cálculo de total
     const total = cartItems.reduce((acc, item) => 
         acc + (item.product.precio * item.quantity), 0
     );
@@ -36,30 +36,25 @@ const Checkout = ({ cartItems, onFinalizePurchase }) => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // ⬅️ FUNCIÓN CRÍTICA: GESTIONA LA COMPRA Y VALIDA EL STOCK
     const handleSubmit = (e) => {
-        e.preventDefault();
-        setStockError(null); // Limpiamos errores anteriores
+        e.preventDefault(); 
+        setStockError(null); 
+        setFormError(null); 
         
         if (cartItems.length === 0) {
-            alert("El carrito está vacío. Redirigiendo a productos.");
             navigate('/productos');
             return;
         }
 
-        // 1. Validación de Formulario
         if (!formData.nombre || !formData.correo || !formData.calle || !formData.comuna) {
-            alert("Por favor, completa los campos obligatorios (*).");
+            setFormError("Por favor, completa todos los campos obligatorios (*)."); 
             return;
         }
 
-
-        // --- 2. VALIDACIÓN DE STOCK TRANSACCIONAL (Validación de la Rúbrica) ---
         let stockInvalido = null;
         for (const item of cartItems) {
             const productSource = allProducts.find(p => p.id === item.product.id);
             
-            // CRITERIO DE FALLO: Si la cantidad solicitada excede el disponible en la fuente
             if (productSource && item.quantity > productSource.stock) {
                 stockInvalido = item;
                 break; 
@@ -67,33 +62,28 @@ const Checkout = ({ cartItems, onFinalizePurchase }) => {
         }
         
         if (stockInvalido) {
-            // CRITERIO DE ERROR #1 (FALLO DE STOCK): El carrito NO se vacía.
+
             setStockError(`El producto "${stockInvalido.product.nombre}" excede el stock disponible (${stockInvalido.product.stock}kg).`);
-            
-            // Simulación de error de pago (debido a stock)
+            console.log("REDIRIGIENDO A ERROR POR STOCK...");
             navigate('/pago-error'); 
             return;
         }
         
 
-        // --- 3. SIMULACIÓN DE PAGO (Si el stock es OK) ---
-        // CRITERIO DE ERROR #2 (FALLO DE BANCO): 90% de éxito / 10% de fallo de banco
-        const pagoExitoso = Math.random() > 0.1; 
+        const pagoExitoso = true; 
 
         if (pagoExitoso) {
-            // CRITERIO DE ÉXITO: Limpia el carrito y redirige
-            onFinalizePurchase();
-            navigate('/pago-correcto');
+ 
+            handleFinalizePurchase(); 
+            console.log("REDIRIGIENDO A ÉXITO...");
+            navigate('/pago-correcto'); 
         } else {
-            // CRITERIO DE ERROR #3 (FALLO DE BANCO): Redirige sin vaciar el carrito
-            setStockError('El banco ha rechazado la transacción. Por favor, inténtalo de nuevo.');
+            setStockError('Error desconocido en el proceso de pago.');
             navigate('/pago-error'); 
         }
     };
 
-    // --- Renderizado del Formulario ---
     if (cartItems.length === 0) {
-        // Renderizado del carrito vacío (omito por brevedad, asumo que ya funciona)
         return (
             <div className="container mt-5 pt-5 text-center">
                 <i className="bi bi-info-circle display-4 text-muted"></i>
@@ -108,7 +98,12 @@ const Checkout = ({ cartItems, onFinalizePurchase }) => {
         <div className="container my-5">
             <h1 className="fw-bolder mb-4">Finalizar Compra</h1>
             
-            {/* Mensaje de error de Stock (visible si hay fallo) */}
+            {formError && (
+                <div className="alert alert-warning mb-4 rounded-1">
+                    <strong>¡Error de formulario!</strong> {formError}
+                </div>
+            )}
+
             {stockError && (
                 <div className="alert alert-danger mb-4 rounded-1">
                     <strong>¡Atención!</strong> {stockError} Por favor, ajusta tu carrito.
@@ -117,8 +112,6 @@ const Checkout = ({ cartItems, onFinalizePurchase }) => {
 
             <form onSubmit={handleSubmit}>
                 <div className="row">
-                    
-                    {/* Columna de Formulario (8) */}
                     <div className="col-lg-8">
                         <div className="card shadow-sm border-0 mb-4 p-4">
                             <h4 className="border-bottom pb-2 mb-4">1. Información de Contacto</h4>
@@ -163,8 +156,7 @@ const Checkout = ({ cartItems, onFinalizePurchase }) => {
                             </div>
                         </div>
                     </div>
-                    
-                    {/* Columna de Resumen (4) */}
+
                     <div className="col-lg-4">
                         <div className="card shadow-lg border-0 sticky-top p-4" style={{ top: '80px' }}>
                             <h4 className="card-title mb-4 border-bottom pb-2">Resumen y Pago</h4>
