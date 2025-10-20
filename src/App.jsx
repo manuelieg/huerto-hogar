@@ -8,8 +8,7 @@ import Home from "./pages/Home.jsx";
 import Categorias from "./pages/Categorias.jsx";
 import Productos from "./pages/Productos.jsx";
 import DetalleProducto from './pages/DetalleProducto.jsx';
-import Nosotros from "./pages/Nosotros.jsx";
-import Admin from "./admin/Admin.jsx"; 
+import Nosotros from "./pages/Nosotros.jsx"; 
 import Login from "./pages/Login.jsx"; 
 import Registro from "./pages/Registro.jsx"; 
 import Carrito from './pages/Carrito.jsx'; 
@@ -18,7 +17,8 @@ import PagoExito from './pages/PagoExito.jsx';
 import PagoError from './pages/PagoError.jsx'; 
 import Blog from './pages/Blog.jsx'; 
 import DetalleBlog from './pages/DetalleBlog.jsx'; 
-
+import Admin from "./admin/Admin.jsx";
+import AdminProductos from './admin/AdminProductos.jsx';
 
 const ProtectedRoute = ({ element: Element }) => {
     const { isAuthenticated } = useAuth();
@@ -29,23 +29,23 @@ const AppRoutes = () => {
     const { cartCount } = useCarrito(); 
     const { isAuthenticated, handleLogout } = useAuth(); 
     const location = useLocation();
-    const hideNavRoutes = ['/admin'];
+
+    const hideNavRoutes = ['/admin', '/admin/productos'];
     const hideNav = hideNavRoutes.includes(location.pathname);
 
-    
     return (
         <div className="d-flex flex-column min-vh-100">
-            {!hideNav && <Header 
-                            cartCount={cartCount} 
-                            isAuthenticated={isAuthenticated} 
-                            onLogout={handleLogout}
-                         />}
-            
-            <main className="flex-grow-1 mt-5 pt-3"> 
-                
+            {!hideNav && (
+                <Header 
+                    cartCount={cartCount} 
+                    isAuthenticated={isAuthenticated} 
+                    onLogout={handleLogout}
+                />
+            )}
+
+            <main className="flex-grow-1 mt-5 pt-3">
                 <Routes>
                     <Route path='/' element={<Home />} />
-
                     <Route path='/productos' element={<Productos />} /> 
                     <Route path="/productos/:id" element={<DetalleProducto />} />
                     <Route path='/categorias' element={<Categorias />} />
@@ -61,17 +61,27 @@ const AppRoutes = () => {
 
                     <Route 
                         path="/admin" 
-                        element={<ProtectedRoute element={Admin} />} 
+                        element={<ProtectedRoute element={() => <Admin />} />} 
+                    />
+                    <Route 
+                        path="/admin/productos" 
+                        element={
+                            <ProtectedRoute 
+                                element={() => (
+                                    <Admin>
+                                        <AdminProductos />
+                                    </Admin>
+                                )} 
+                            />
+                        } 
                     />
                 </Routes>
             </main>
-            
+
             {!hideNav && <Footer />}
-            
         </div>
     );
 }
-
 
 function App() {
     return (

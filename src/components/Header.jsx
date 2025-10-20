@@ -83,9 +83,6 @@ const Header = ({ cartCount = 0 }) => {
                             <Link to="/productos" className="nav-link">Productos</Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/ofertas" className="nav-link">Ofertas</Link>
-                        </li>
-                        <li className="nav-item">
                             <Link to="/nosotros" className="nav-link">Nosotros</Link>
                         </li>
                         <li className="nav-item">
