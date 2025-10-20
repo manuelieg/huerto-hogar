@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCarrito } from '../context/CarritoManager.jsx'; 
+import { getAllProducts } from '../data/productos.js';
 
-const Carrito = ({ cartItems, onRemove, onUpdateQuantity }) => {
+const Carrito = () => {
+    const { cartItems, handleRemoveFromCart, handleAddToCart } = useCarrito();
     
+    const allProducts = getAllProducts();
+
     const total = cartItems.reduce((acc, item) => 
         acc + (item.product.precio * item.quantity), 0
     );
@@ -15,12 +20,11 @@ const Carrito = ({ cartItems, onRemove, onUpdateQuantity }) => {
         const currentItem = cartItems.find(item => item.product.id === product.id);
         if (!currentItem) return;
 
-        const delta = newQuantity - currentItem.quantity;
-
         if (newQuantity <= 0) {
-            onRemove(product.id);
+            handleRemoveFromCart(product.id);
         } else {
-            onUpdateQuantity(product, delta);
+            const delta = newQuantity - currentItem.quantity;
+            handleAddToCart(product, delta);
         }
     };
 
@@ -36,14 +40,18 @@ const Carrito = ({ cartItems, onRemove, onUpdateQuantity }) => {
     }
 
     return (
-        <div className="container mt-5">
+        <div className="container my-5">
             <h1 className="fw-bolder mb-4">Tu Carrito de Compras</h1>
             <div className="row">
                 
                 <div className="col-lg-8">
                     <div className="card shadow-sm border-0">
                         <div className="card-body">
-                            {cartItems.map(item => (
+                            {cartItems.map(item => {
+                                const productSource = allProducts.find(p => p.id === item.product.id);
+                                const maxStock = productSource ? productSource.stock : 99;
+
+                                return (
                                 <div key={item.product.id} className="row align-items-center border-bottom py-3">
                                     
                                     <div className="col-md-5 d-flex align-items-center">
@@ -53,14 +61,15 @@ const Carrito = ({ cartItems, onRemove, onUpdateQuantity }) => {
                                             <small className="text-muted">{formatPrice(item.product.precio)}/Kg</small>
                                         </div>
                                     </div>
+
                                     <div className="col-md-2 text-center">
                                         <input 
                                             type="number" 
                                             value={item.quantity} 
-
                                             onChange={(e) => handleQuantityChange(item.product, parseInt(e.target.value, 10))} 
                                             className="form-control form-control-sm text-center"
                                             min="0"
+                                            max={maxStock}
                                             style={{ width: '70px', margin: '0 auto' }}
                                         />
                                     </div>
@@ -71,14 +80,14 @@ const Carrito = ({ cartItems, onRemove, onUpdateQuantity }) => {
 
                                     <div className="col-md-2 text-end">
                                         <button 
-                                            onClick={() => onRemove(item.product.id)}
+                                            onClick={() => handleRemoveFromCart(item.product.id)}
                                             className="btn btn-outline-danger btn-sm"
                                         >
                                             <i className="bi bi-trash"></i>
                                         </button>
                                     </div>
                                 </div>
-                            ))}
+                            )})}
                         </div>
                     </div>
                 </div>
@@ -93,7 +102,6 @@ const Carrito = ({ cartItems, onRemove, onUpdateQuantity }) => {
                                 <span>{formatPrice(total)}</span>
                             </div>
                             
-
                             <div className="d-flex justify-content-between my-3 border-top pt-3">
                                 <span className="fw-bolder fs-5">Total a Pagar:</span>
                                 <span className="fw-bolder fs-4 text-success">{formatPrice(total)}</span>
