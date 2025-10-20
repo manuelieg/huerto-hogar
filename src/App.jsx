@@ -16,6 +16,7 @@ import Checkout from './pages/Checkout.jsx';
 import PagoExito from './pages/PagoExito.jsx'; 
 import PagoError from './pages/PagoError.jsx'; 
 import Blog from './pages/Blog.jsx'; 
+import Contacto from './pages/Contacto.jsx'; 
 import DetalleBlog from './pages/DetalleBlog.jsx'; 
 import Admin from "./admin/Admin.jsx";
 import AdminProductos from './admin/AdminProductos.jsx';
@@ -55,6 +56,7 @@ const AppRoutes = () => {
                     <Route path='/categorias' element={<Categorias />} />
                     <Route path='/nosotros' element={<Nosotros />} />
                     <Route path="/blog" element={<Blog />} />
+                    <Route path="/contacto" element={<Contacto />} />
                     <Route path="/blog/:id" element={<DetalleBlog />} />
                     <Route path="/login" element={<Login />} /> 
                     <Route path="/registro" element={<Registro />} />

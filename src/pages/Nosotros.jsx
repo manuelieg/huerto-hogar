@@ -29,8 +29,19 @@ function Nosotros() {
                 estableciendo un nuevo estándar en la distribución de productos agrícolas directos del productor al 
                 consumidor.
             </p>
+            
+            <div className="text-center mt-5">
+                <img 
+                    src="/images/logo_header.png" 
+                    alt="HuertoHogar - productos del campo" 
+                    className="img-fluid rounded shadow-sm" 
+                    style={{ maxWidth: '250px', height: 'auto' }}
+                />
+            </div>
         </div>
     );
 }
 
 export default Nosotros;
+
+

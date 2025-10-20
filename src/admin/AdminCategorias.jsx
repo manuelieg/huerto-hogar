@@ -100,8 +100,8 @@ function AdminCategorias() {
         <div className="container mt-4">
             <h2 className="mb-4">Administración de Categorías</h2>
             <ListadoCategorias />
-            <FormularioAgregar />
             <FormularioEditar />
+            <FormularioAgregar />
         </div>
     );
 }

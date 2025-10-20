@@ -3,8 +3,8 @@ export const carouselItems = [
         id: 1, 
         src: '/images/frutasBanner.jpg', 
         alt: 'Mesa con frutas y verduras frescas', 
-        titulo: '¡Nuestras Ofertas de la Semana!', 
-        descripcion: 'Descuentos de hasta 30% en frutas y verduras.' 
+        titulo: 'Explora HuertoHogar', 
+        descripcion: 'Descubre nuestras frutas y verduras 100% naturales.' 
     },
     { 
         id: 2, 

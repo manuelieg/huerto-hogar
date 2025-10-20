@@ -18,7 +18,7 @@ const Header = ({ cartCount = 0 }) => {
             <div className="navbar navbar-expand-lg navbar-light navbar-top border-bottom">
                 <div className="container-fluid">
                     <Link to="/" className="navbar-brand fs-4 fw-bold text-dark me-5">
-                        Huerto Hogar
+                        HuertoHogar
                     </Link>
 
                     <form className="d-flex mx-auto" role="search" style={{ maxWidth: '400px' }}>

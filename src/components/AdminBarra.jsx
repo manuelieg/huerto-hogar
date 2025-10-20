@@ -40,11 +40,6 @@ function AdminBarra() {
                         <i className="bi bi-people-fill me-2"></i> Usuarios
                     </Link>
                 </li>
-                <li className="nav-item mb-2">
-                    <Link to="/admin/reportes" className="nav-link">
-                        <i className="bi bi-bar-chart-line-fill me-2"></i> Reportes
-                    </Link>
-                </li>
                 <li className="nav-item mt-auto pt-3 border-top">
                     <button
                         onClick={manejarCerrarSesion}

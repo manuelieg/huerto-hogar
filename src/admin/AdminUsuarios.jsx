@@ -12,7 +12,10 @@ function AdminUsuarios() {
     const [nuevaEntrada, setNuevaEntrada] = useState({
         id: '', nombre: '', apellido: '', email: '', password: ''
     });
-    
+
+    // Estado para controlar si se muestran u ocultan las contraseñas
+    const [mostrarPasswords, setMostrarPasswords] = useState({});
+
     useEffect(() => {
         localStorage.setItem("usuarios", JSON.stringify(listaUsuarios));
     }, [listaUsuarios]);
@@ -38,6 +41,10 @@ function AdminUsuarios() {
         setEntradaEditando(null);
     };
 
+    // Cambiar visibilidad de una contraseña específica
+    const togglePassword = (id) => {
+        setMostrarPasswords(prev => ({ ...prev, [id]: !prev[id] }));
+    };
 
     const FormularioAgregar = () => (
         <div className="card mb-4 p-3">
@@ -66,7 +73,6 @@ function AdminUsuarios() {
         );
     };
 
-
     const ListadoUsuarios = () => (
         <div className="card mb-4 p-3">
             <h5>Listado de Usuarios</h5>
@@ -88,7 +94,17 @@ function AdminUsuarios() {
                             <td>{u.nombre}</td>
                             <td>{u.apellido}</td>
                             <td>{u.email}</td>
-                            <td>{u.password}</td>
+                            <td>
+                                {mostrarPasswords[u.id] 
+                                    ? u.password 
+                                    : '•'.repeat(u.password.length || 6)}
+                                <button 
+                                    onClick={() => togglePassword(u.id)} 
+                                    className="btn btn-sm btn-outline-secondary ms-2"
+                                >
+                                    {mostrarPasswords[u.id] ? 'Ocultar' : 'Ver'}
+                                </button>
+                            </td>
                             <td>
                                 <button onClick={() => iniciarEdicion(u)} className="btn btn-sm btn-warning me-2">Editar</button>
                                 <button onClick={() => eliminarUsuario(u.id)} className="btn btn-sm btn-danger">Eliminar</button>
@@ -104,8 +120,8 @@ function AdminUsuarios() {
         <div className="container mt-4">
             <h2 className="mb-4">Administración de Usuarios</h2>
             <ListadoUsuarios />
-            <FormularioAgregar />
             <FormularioEditar />
+            <FormularioAgregar />
         </div>
     );
 }
