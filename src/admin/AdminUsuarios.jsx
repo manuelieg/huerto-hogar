@@ -1,66 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { usuarios as usuariosIniciales } from '../data/usuarios.js';
+import { usuarios as usuariosBase } from '../data/usuarios.js';
 
 function AdminUsuarios() {
-    const [usuarios, setUsuarios] = useState(() => {
+    
+    const [listaUsuarios, setListaUsuarios] = useState(() => {
         const guardado = localStorage.getItem("usuarios");
-        return guardado ? JSON.parse(guardado) : usuariosIniciales;
+        return guardado ? JSON.parse(guardado) : usuariosBase;
     });
 
-    const [usuarioEditando, setUsuarioEditando] = useState(null);
-    const [nuevoUsuario, setNuevoUsuario] = useState({
+    const [entradaEditando, setEntradaEditando] = useState(null);
+    const [nuevaEntrada, setNuevaEntrada] = useState({
         id: '', nombre: '', apellido: '', email: '', password: ''
     });
-
+    
     useEffect(() => {
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
-    }, [usuarios]);
+        localStorage.setItem("usuarios", JSON.stringify(listaUsuarios));
+    }, [listaUsuarios]);
 
     const agregarUsuario = () => {
-        if (!nuevoUsuario.id || !nuevoUsuario.nombre || !nuevoUsuario.email) {
-            alert('ID, Nombre y Email son obligatorios.');
+        if (!nuevaEntrada.id || !nuevaEntrada.nombre || !nuevaEntrada.email) {
+            alert('ID, Nombre y Email son obligatorios.'); 
             return;
         }
-        setUsuarios([...usuarios, nuevoUsuario]);
-        setNuevoUsuario({ id: '', nombre: '', apellido: '', email: '', password: '' });
+        setListaUsuarios([...listaUsuarios, nuevaEntrada]);
+        setNuevaEntrada({ id: '', nombre: '', apellido: '', email: '', password: '' });
     };
 
     const eliminarUsuario = (id) => {
-        if (window.confirm('¿Eliminar este usuario?')) {
-            setUsuarios(usuarios.filter(u => u.id !== id));
+        if (window.confirm('¿Eliminar este usuario?')) { 
+            setListaUsuarios(listaUsuarios.filter(u => u.id !== id));
         }
     };
 
-    const iniciarEdicion = (usuario) => setUsuarioEditando({ ...usuario });
+    const iniciarEdicion = (usuario) => setEntradaEditando({ ...usuario });
     const guardarEdicion = () => {
-        setUsuarios(usuarios.map(u => u.id === usuarioEditando.id ? usuarioEditando : u));
-        setUsuarioEditando(null);
+        setListaUsuarios(listaUsuarios.map(u => u.id === entradaEditando.id ? entradaEditando : u));
+        setEntradaEditando(null);
     };
 
 
-    const FormAgregar = () => (
+    const FormularioAgregar = () => (
         <div className="card mb-4 p-3">
             <h5>Agregar Nuevo Usuario</h5>
-            <input type="text" placeholder="ID" value={nuevoUsuario.id} onChange={e => setNuevoUsuario({ ...nuevoUsuario, id: e.target.value })} className="form-control mb-2" />
-            <input type="text" placeholder="Nombre" value={nuevoUsuario.nombre} onChange={e => setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })} className="form-control mb-2" />
-            <input type="text" placeholder="Apellido" value={nuevoUsuario.apellido} onChange={e => setNuevoUsuario({ ...nuevoUsuario, apellido: e.target.value })} className="form-control mb-2" />
-            <input type="email" placeholder="Email" value={nuevoUsuario.email} onChange={e => setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })} className="form-control mb-2" />
-            <input type="password" placeholder="Contraseña" value={nuevoUsuario.password} onChange={e => setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })} className="form-control mb-2" />
+            <input type="text" placeholder="ID" value={nuevaEntrada.id} onChange={e => setNuevaEntrada({ ...nuevaEntrada, id: e.target.value })} className="form-control mb-2" />
+            <input type="text" placeholder="Nombre" value={nuevaEntrada.nombre} onChange={e => setNuevaEntrada({ ...nuevaEntrada, nombre: e.target.value })} className="form-control mb-2" />
+            <input type="text" placeholder="Apellido" value={nuevaEntrada.apellido} onChange={e => setNuevaEntrada({ ...nuevaEntrada, apellido: e.target.value })} className="form-control mb-2" />
+            <input type="email" placeholder="Email" value={nuevaEntrada.email} onChange={e => setNuevaEntrada({ ...nuevaEntrada, email: e.target.value })} className="form-control mb-2" />
+            <input type="password" placeholder="Contraseña" value={nuevaEntrada.password} onChange={e => setNuevaEntrada({ ...nuevaEntrada, password: e.target.value })} className="form-control mb-2" />
             <button onClick={agregarUsuario} className="btn btn-success">Agregar Usuario</button>
         </div>
     );
 
-    const FormEditar = () => {
-        if (!usuarioEditando) return null;
+    const FormularioEditar = () => {
+        if (!entradaEditando) return null;
         return (
             <div className="card mb-4 p-3 border-warning">
-                <h5>Editar Usuario: {usuarioEditando.nombre}</h5>
-                <input type="text" placeholder="Nombre" value={usuarioEditando.nombre} onChange={e => setUsuarioEditando({ ...usuarioEditando, nombre: e.target.value })} className="form-control mb-2" />
-                <input type="text" placeholder="Apellido" value={usuarioEditando.apellido} onChange={e => setUsuarioEditando({ ...usuarioEditando, apellido: e.target.value })} className="form-control mb-2" />
-                <input type="email" placeholder="Email" value={usuarioEditando.email} onChange={e => setUsuarioEditando({ ...usuarioEditando, email: e.target.value })} className="form-control mb-2" />
-                <input type="password" placeholder="Contraseña" value={usuarioEditando.password} onChange={e => setUsuarioEditando({ ...usuarioEditando, password: e.target.value })} className="form-control mb-2" />
+                <h5>Editar Usuario: {entradaEditando.nombre}</h5>
+                <input type="text" placeholder="Nombre" value={entradaEditando.nombre} onChange={e => setEntradaEditando({ ...entradaEditando, nombre: e.target.value })} className="form-control mb-2" />
+                <input type="text" placeholder="Apellido" value={entradaEditando.apellido} onChange={e => setEntradaEditando({ ...entradaEditando, apellido: e.target.value })} className="form-control mb-2" />
+                <input type="email" placeholder="Email" value={entradaEditando.email} onChange={e => setEntradaEditando({ ...entradaEditando, email: e.target.value })} className="form-control mb-2" />
+                <input type="password" placeholder="Contraseña" value={entradaEditando.password} onChange={e => setEntradaEditando({ ...entradaEditando, password: e.target.value })} className="form-control mb-2" />
                 <button onClick={guardarEdicion} className="btn btn-primary me-2">Guardar Cambios</button>
-                <button onClick={() => setUsuarioEditando(null)} className="btn btn-secondary">Cancelar</button>
+                <button onClick={() => setEntradaEditando(null)} className="btn btn-secondary">Cancelar</button>
             </div>
         );
     };
@@ -81,7 +82,7 @@ function AdminUsuarios() {
                     </tr>
                 </thead>
                 <tbody>
-                    {usuarios.map(u => (
+                    {listaUsuarios.map(u => (
                         <tr key={u.id}>
                             <td>{u.id}</td>
                             <td>{u.nombre}</td>
@@ -103,8 +104,8 @@ function AdminUsuarios() {
         <div className="container mt-4">
             <h2 className="mb-4">Administración de Usuarios</h2>
             <ListadoUsuarios />
-            <FormAgregar />
-            <FormEditar />
+            <FormularioAgregar />
+            <FormularioEditar />
         </div>
     );
 }

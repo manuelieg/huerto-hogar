@@ -1,67 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { categorias as categoriasIniciales } from '../data/categorias.js';
+import { categorias as categoriasBase } from '../data/categorias.js';
 
 function AdminCategorias() {
-    const [categorias, setCategorias] = useState(() => {
+    
+    const [listaCategorias, setListaCategorias] = useState(() => {
         const guardado = localStorage.getItem("categorias");
-        return guardado ? JSON.parse(guardado) : categoriasIniciales;
+        return guardado ? JSON.parse(guardado) : categoriasBase;
     });
 
-    const [nuevaCategoria, setNuevaCategoria] = useState({
+    const [nuevaEntrada, setNuevaEntrada] = useState({
         id: '', nombre: '', descripcion: '', imagen: '', link: ''
     });
 
-    const [categoriaEditando, setCategoriaEditando] = useState(null);
+    const [entradaEditando, setEntradaEditando] = useState(null);
 
     useEffect(() => {
-        localStorage.setItem("categorias", JSON.stringify(categorias));
-    }, [categorias]);
+        localStorage.setItem("categorias", JSON.stringify(listaCategorias));
+    }, [listaCategorias]);
 
     const agregarCategoria = () => {
-        if (!nuevaCategoria.id || !nuevaCategoria.nombre) {
-            alert('ID y Nombre son obligatorios.');
+        if (!nuevaEntrada.id || !nuevaEntrada.nombre) {
+            alert('ID y Nombre son obligatorios.'); 
             return;
         }
-        setCategorias([...categorias, nuevaCategoria]);
-        setNuevaCategoria({ id: '', nombre: '', descripcion: '', imagen: '', link: '' });
+        setListaCategorias([...listaCategorias, nuevaEntrada]);
+        setNuevaEntrada({ id: '', nombre: '', descripcion: '', imagen: '', link: '' });
     };
 
-    const iniciarEdicion = (cat) => setCategoriaEditando({ ...cat });
+    const iniciarEdicion = (cat) => setEntradaEditando({ ...cat });
 
     const guardarEdicion = () => {
-        setCategorias(categorias.map(c => c.id === categoriaEditando.id ? categoriaEditando : c));
-        setCategoriaEditando(null);
+        setListaCategorias(listaCategorias.map(c => c.id === entradaEditando.id ? entradaEditando : c));
+        setEntradaEditando(null);
     };
 
     const eliminarCategoria = (id) => {
-        if (window.confirm('¿Eliminar esta categoría?')) {
-            setCategorias(categorias.filter(c => c.id !== id));
+        if (window.confirm('¿Eliminar esta categoría?')) { 
+            setListaCategorias(listaCategorias.filter(c => c.id !== id));
         }
     };
 
-    const FormAgregar = () => (
+    const FormularioAgregar = () => (
         <div className="card mb-4 p-3">
             <h5>Agregar Nueva Categoría</h5>
-            <input type="text" placeholder="ID" value={nuevaCategoria.id} onChange={e => setNuevaCategoria({ ...nuevaCategoria, id: e.target.value })} className="form-control mb-2" />
-            <input type="text" placeholder="Nombre" value={nuevaCategoria.nombre} onChange={e => setNuevaCategoria({ ...nuevaCategoria, nombre: e.target.value })} className="form-control mb-2" />
-            <textarea placeholder="Descripción" value={nuevaCategoria.descripcion} onChange={e => setNuevaCategoria({ ...nuevaCategoria, descripcion: e.target.value })} className="form-control mb-2" />
-            <input type="text" placeholder="URL Imagen" value={nuevaCategoria.imagen} onChange={e => setNuevaCategoria({ ...nuevaCategoria, imagen: e.target.value })} className="form-control mb-2" />
-            <input type="text" placeholder="Link" value={nuevaCategoria.link} onChange={e => setNuevaCategoria({ ...nuevaCategoria, link: e.target.value })} className="form-control mb-2" />
+            <input type="text" placeholder="ID" value={nuevaEntrada.id} onChange={e => setNuevaEntrada({ ...nuevaEntrada, id: e.target.value })} className="form-control mb-2" />
+            <input type="text" placeholder="Nombre" value={nuevaEntrada.nombre} onChange={e => setNuevaEntrada({ ...nuevaEntrada, nombre: e.target.value })} className="form-control mb-2" />
+            <textarea placeholder="Descripción" value={nuevaEntrada.descripcion} onChange={e => setNuevaEntrada({ ...nuevaEntrada, descripcion: e.target.value })} className="form-control mb-2" />
+            <input type="text" placeholder="URL Imagen" value={nuevaEntrada.imagen} onChange={e => setNuevaEntrada({ ...nuevaEntrada, imagen: e.target.value })} className="form-control mb-2" />
+            <input type="text" placeholder="Link" value={nuevaEntrada.link} onChange={e => setNuevaEntrada({ ...nuevaEntrada, link: e.target.value })} className="form-control mb-2" />
             <button onClick={agregarCategoria} className="btn btn-success">Agregar Categoría</button>
         </div>
     );
 
-    const FormEditar = () => {
-        if (!categoriaEditando) return null;
+    const FormularioEditar = () => {
+        if (!entradaEditando) return null;
         return (
             <div className="card mb-4 p-3 border-warning">
-                <h5>Editar Categoría: {categoriaEditando.nombre}</h5>
-                <input type="text" placeholder="Nombre" value={categoriaEditando.nombre} onChange={e => setCategoriaEditando({ ...categoriaEditando, nombre: e.target.value })} className="form-control mb-2" />
-                <textarea placeholder="Descripción" value={categoriaEditando.descripcion} onChange={e => setCategoriaEditando({ ...categoriaEditando, descripcion: e.target.value })} className="form-control mb-2" />
-                <input type="text" placeholder="URL Imagen" value={categoriaEditando.imagen} onChange={e => setCategoriaEditando({ ...categoriaEditando, imagen: e.target.value })} className="form-control mb-2" />
-                <input type="text" placeholder="Link" value={categoriaEditando.link} onChange={e => setCategoriaEditando({ ...categoriaEditando, link: e.target.value })} className="form-control mb-2" />
+                <h5>Editar Categoría: {entradaEditando.nombre}</h5>
+                <input type="text" placeholder="Nombre" value={entradaEditando.nombre} onChange={e => setEntradaEditando({ ...entradaEditando, nombre: e.target.value })} className="form-control mb-2" />
+                <textarea placeholder="Descripción" value={entradaEditando.descripcion} onChange={e => setEntradaEditando({ ...entradaEditando, descripcion: e.target.value })} className="form-control mb-2" />
+                <input type="text" placeholder="URL Imagen" value={entradaEditando.imagen} onChange={e => setEntradaEditando({ ...entradaEditando, imagen: e.target.value })} className="form-control mb-2" />
+                <input type="text" placeholder="Link" value={entradaEditando.link} onChange={e => setEntradaEditando({ ...entradaEditando, link: e.target.value })} className="form-control mb-2" />
                 <button onClick={guardarEdicion} className="btn btn-primary me-2">Guardar Cambios</button>
-                <button onClick={() => setCategoriaEditando(null)} className="btn btn-secondary">Cancelar</button>
+                <button onClick={() => setEntradaEditando(null)} className="btn btn-secondary">Cancelar</button>
             </div>
         );
     };
@@ -79,7 +80,7 @@ function AdminCategorias() {
                     </tr>
                 </thead>
                 <tbody>
-                    {categorias.map(c => (
+                    {listaCategorias.map(c => (
                         <tr key={c.id}>
                             <td>{c.id}</td>
                             <td>{c.nombre}</td>
@@ -99,8 +100,8 @@ function AdminCategorias() {
         <div className="container mt-4">
             <h2 className="mb-4">Administración de Categorías</h2>
             <ListadoCategorias />
-            <FormAgregar />
-            <FormEditar />
+            <FormularioAgregar />
+            <FormularioEditar />
         </div>
     );
 }
