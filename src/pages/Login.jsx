@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthManager.jsx'; 
+import { useAuth } from '../context/AuthManager.jsx';
 
 const Login = () => {
     const navigate = useNavigate();
-    const { handleLogin } = useAuth(); 
-    
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const { handleLogin } = useAuth();
+    const [usuario, setUsuario] = useState('');
+    const [contrasena, setContrasena] = useState('');
     const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setError('');
 
-        const success = handleLogin(username, password); 
+        const exito = handleLogin(usuario, contrasena);
 
-        if (success) {
+        if (exito) {
             navigate('/admin');
         } else {
-            setError('Credenciales inválidas. Intenta con "admin" y "123".');
+            setError('Credenciales inválidas. Intenta de nuevo.');
         }
     };
 
@@ -33,33 +32,33 @@ const Login = () => {
                             Usa las credenciales de prueba: **admin / 123**
                         </p>
 
-                        <form onSubmit={handleSubmit}>
-                            {error && (
-                                <div className="alert alert-danger" role="alert">
-                                    {error}
-                                </div>
-                            )}
+                        {error && (
+                            <div className="alert alert-danger" role="alert">
+                                {error}
+                            </div>
+                        )}
 
+                        <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label htmlFor="username" className="form-label">Usuario / Correo</label>
+                                <label htmlFor="usuario" className="form-label">Usuario / Correo</label>
                                 <input 
                                     type="text" 
                                     className="form-control rounded-1" 
-                                    id="username" 
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    id="usuario" 
+                                    value={usuario}
+                                    onChange={(e) => setUsuario(e.target.value)}
                                     required 
                                 />
                             </div>
 
                             <div className="mb-3">
-                                <label htmlFor="password" className="form-label">Contraseña</label>
+                                <label htmlFor="contrasena" className="form-label">Contraseña</label>
                                 <input 
                                     type="password" 
                                     className="form-control rounded-1" 
-                                    id="password" 
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    id="contrasena" 
+                                    value={contrasena}
+                                    onChange={(e) => setContrasena(e.target.value)}
                                     required 
                                 />
                             </div>

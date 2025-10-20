@@ -1,7 +1,20 @@
-import AdminHeader from "../components/AdminHeader";
-import AdminBarra from "../components/AdminBarra";
+import React, { useState } from "react";
+import AdminHeader from "../components/AdminHeader.jsx";
+import AdminBarra from "../components/AdminBarra.jsx";
+import { productos as productosIniciales } from "../data/productos.js";
+import { usuarios as usuariosIniciales } from "../data/usuarios.js";
 
 function Admin({ children }) {
+  const [productos, setProductos] = useState(() => {
+    const guardado = localStorage.getItem("productos");
+    return guardado ? JSON.parse(guardado) : productosIniciales;
+  });
+
+  const [usuarios, setUsuarios] = useState(() => {
+    const guardado = localStorage.getItem("usuarios");
+    return guardado ? JSON.parse(guardado) : usuariosIniciales;
+  });
+
   return (
     <div className="admin-container">
       <AdminHeader />
@@ -31,7 +44,7 @@ function Admin({ children }) {
                     <div className="card card-custom text-center">
                       <div className="card-body">
                         <h5 className="card-title">Productos</h5>
-                        <p className="card-text fs-3">58</p>
+                        <p className="card-text fs-3">{productos.length}</p>
                       </div>
                     </div>
                   </div>
@@ -39,7 +52,7 @@ function Admin({ children }) {
                     <div className="card card-custom text-center">
                       <div className="card-body">
                         <h5 className="card-title">Usuarios</h5>
-                        <p className="card-text fs-3">23</p>
+                        <p className="card-text fs-3">{usuarios.length}</p>
                       </div>
                     </div>
                   </div>
@@ -54,3 +67,4 @@ function Admin({ children }) {
 }
 
 export default Admin;
+

@@ -138,9 +138,9 @@ function AdminProductos() {
     return (
         <div className="container mt-4">
             <h2 className="mb-4">Administración de Productos</h2>
+            <ListadoProductos />
             <FormAgregar />
             <FormEditar />
-            <ListadoProductos />
             <ProductosCriticos />
             <Reportes />
         </div>

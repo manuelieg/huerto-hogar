@@ -19,10 +19,13 @@ import Blog from './pages/Blog.jsx';
 import DetalleBlog from './pages/DetalleBlog.jsx'; 
 import Admin from "./admin/Admin.jsx";
 import AdminProductos from './admin/AdminProductos.jsx';
+import AdminCategorias from './admin/AdminCategorias.jsx';
+import AdminUsuarios from './admin/AdminUsuarios.jsx';
 
-const ProtectedRoute = ({ element: Element }) => {
+const ProtectedRoute = ({ children }) => {
     const { isAuthenticated } = useAuth();
-    return isAuthenticated ? <Element /> : <Navigate to="/login" replace />;
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    return children;
 };
 
 const AppRoutes = () => {
@@ -30,7 +33,7 @@ const AppRoutes = () => {
     const { isAuthenticated, handleLogout } = useAuth(); 
     const location = useLocation();
 
-    const hideNavRoutes = ['/admin', '/admin/productos'];
+    const hideNavRoutes = ['/admin', '/admin/productos', '/admin/categorias', '/admin/ordenes', '/admin/usuarios', '/admin/reportes'];
     const hideNav = hideNavRoutes.includes(location.pathname);
 
     return (
@@ -59,29 +62,17 @@ const AppRoutes = () => {
                     <Route path='/pago-correcto' element={<PagoExito />} />
                     <Route path='/pago-error' element={<PagoError />} />
 
-                    <Route 
-                        path="/admin" 
-                        element={<ProtectedRoute element={() => <Admin />} />} 
-                    />
-                    <Route 
-                        path="/admin/productos" 
-                        element={
-                            <ProtectedRoute 
-                                element={() => (
-                                    <Admin>
-                                        <AdminProductos />
-                                    </Admin>
-                                )} 
-                            />
-                        } 
-                    />
+                    <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+                    <Route path="/admin/productos" element={<ProtectedRoute><Admin><AdminProductos /></Admin></ProtectedRoute>} />
+                    <Route path="/admin/categorias" element={<ProtectedRoute><Admin><AdminCategorias /></Admin></ProtectedRoute>} />
+                    <Route path="/admin/usuarios" element={<ProtectedRoute><Admin><AdminUsuarios /></Admin></ProtectedRoute>} />
                 </Routes>
             </main>
 
             {!hideNav && <Footer />}
         </div>
     );
-}
+};
 
 function App() {
     return (
@@ -94,3 +85,4 @@ function App() {
 }
 
 export default App;
+

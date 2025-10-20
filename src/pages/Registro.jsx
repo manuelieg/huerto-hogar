@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { usuarios as usuariosIniciales } from '../data/usuarios.js';
 
 const Registro = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        nombre: '',
-        apellido: '',
-        email: '',
-        password: ''
+    const [formData, setFormData] = useState({ nombre: '', apellido: '', email: '', password: '' });
+    const [usuarios, setUsuarios] = useState(() => {
+        const guardado = localStorage.getItem('usuarios');
+        return guardado ? JSON.parse(guardado) : usuariosIniciales;
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        console.log('Registro simulado con éxito:', formData);
-        
-        navigate('/login');
-    };
+    useEffect(() => {
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    }, [usuarios]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const existe = usuarios.find(u => u.email === formData.email);
+        if (existe) {
+            alert('El correo ya está registrado');
+            return;
+        }
+
+        setUsuarios([...usuarios, { ...formData, id: Date.now() }]);
+        alert('Registro exitoso');
+        navigate('/login');
     };
 
     return (
@@ -32,29 +42,25 @@ const Registro = () => {
 
                         <form onSubmit={handleSubmit}>
                             <div className="row g-3">
-                                
                                 <div className="col-md-6">
                                     <label htmlFor="nombre" className="form-label">Nombre</label>
-                                    <input type="text" className="form-control rounded-1" id="nombre" name="nombre" onChange={handleChange} required />
+                                    <input type="text" className="form-control" id="nombre" name="nombre" onChange={handleChange} required />
                                 </div>
                                 <div className="col-md-6">
                                     <label htmlFor="apellido" className="form-label">Apellido</label>
-                                    <input type="text" className="form-control rounded-1" id="apellido" name="apellido" onChange={handleChange} required />
+                                    <input type="text" className="form-control" id="apellido" name="apellido" onChange={handleChange} required />
                                 </div>
-                                
                                 <div className="col-12">
                                     <label htmlFor="email" className="form-label">Correo Electrónico</label>
-                                    <input type="email" className="form-control rounded-1" id="email" name="email" onChange={handleChange} required />
+                                    <input type="email" className="form-control" id="email" name="email" onChange={handleChange} required />
                                 </div>
                                 <div className="col-12">
                                     <label htmlFor="password" className="form-label">Contraseña</label>
-                                    <input type="password" className="form-control rounded-1" id="password" name="password" onChange={handleChange} required />
+                                    <input type="password" className="form-control" id="password" name="password" onChange={handleChange} required />
                                 </div>
                             </div>
-                            
-                            <button type="submit" className="btn btn-warning w-100 rounded-1 py-2 mt-4 fw-bold">
-                                Registrarse
-                            </button>
+
+                            <button type="submit" className="btn btn-warning w-100 mt-4 fw-bold">Registrarse</button>
                         </form>
 
                         <p className="text-center mt-4">
