@@ -1,72 +1,78 @@
-html, body, #root {
-  height: 100%;
-}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    --color-hoja: #34a853;
+    --color-madera-clara: #faf0e6; 
+    --color-secundario: #212529; 
 }
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-madera-clara);
+    min-height: 100vh; 
+    display: flex;
+    flex-direction: column;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+#root {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.navbar-top {
+    background-color: var(--color-hoja) !important;
+    border-bottom: 1px solid #287a41;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.navbar-top .navbar-brand,
+.navbar-top .nav-link,
+.navbar-top .text-dark {
+    color: white !important; 
+}
+
+.navbar-top .btn-outline-primary {
+    color: white;
+    border-color: white;
+}
+.navbar-top .btn-outline-primary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-success {
+    background-color: #157347;
+    border-color: #157347;
+}
+
+.navbar-bottom {
+    background-color: var(--color-secundario) !important;
+}
+
+
+.btn-primary {
+    background-color: var(--color-hoja); 
+    border-color: var(--color-hoja);
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #287a41; 
+    border-color: #287a41;
+}
+
+.card {
+    border-radius: 12px !important;
+    border: none;
+}
+
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.5); 
+    border-radius: 8px;
+    padding: 10px 15px;
+    bottom: 10%; 
+}
+
+.footer-main {
+    background-color: var(--color-secundario) !important;
+    color: white;
 }
