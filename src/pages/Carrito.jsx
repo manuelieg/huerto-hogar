@@ -1,11 +1,12 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-// La importación ya es correcta, usando el hook 'usarCarrito'
-import { usarCarrito } from '../context/GestionCarrito.jsx';
-import { getAllProducts } from '../data/productos.js';
+import React from "react";
+import { Link } from "react-router-dom";
+import { usarCarrito } from "../context/GestionCarrito.jsx";
+import { getAllProducts } from "../data/productos.js";
+import ListaDeCompraImagen from "../components/ListaDeCompraImagen.jsx";
 
 const Carrito = () => {
-  const { articulosCarrito, eliminarDelCarrito, agregarAlCarrito } = usarCarrito();
+  const { articulosCarrito, eliminarDelCarrito, agregarAlCarrito } =
+    usarCarrito();
 
   const allProducts = getAllProducts();
 
@@ -15,15 +16,17 @@ const Carrito = () => {
   );
 
   const formatearPrecio = (precio) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP',
+    return new Intl.NumberFormat("es-CL", {
+      style: "currency",
+      currency: "CLP",
       minimumFractionDigits: 0,
     }).format(precio);
   };
 
   const manejarCambioCantidad = (producto, nuevaCantidad) => {
-    const itemActual = articulosCarrito.find((item) => item.product.id === producto.id);
+    const itemActual = articulosCarrito.find(
+      (item) => item.product.id === producto.id
+    );
     if (!itemActual) return;
 
     if (nuevaCantidad <= 0) {
@@ -57,7 +60,9 @@ const Carrito = () => {
           <div className="card shadow-sm border-0">
             <div className="card-body">
               {articulosCarrito.map((item) => {
-                const productSource = allProducts.find((p) => p.id === item.product.id);
+                const productSource = allProducts.find(
+                  (p) => p.id === item.product.id
+                );
                 const maxStock = productSource ? productSource.stock : 99;
 
                 return (
@@ -67,17 +72,19 @@ const Carrito = () => {
                   >
                     <div className="col-md-5 d-flex align-items-center">
                       <img
-                        src={item.product.imagen || '/images/placeholder.png'}
+                        src={item.product.imagen || "/images/placeholder.png"}
                         alt={item.product.nombre}
                         className="img-fluid me-3 rounded"
                         style={{
-                          width: '60px',
-                          height: '60px',
-                          objectFit: 'cover',
+                          width: "60px",
+                          height: "60px",
+                          objectFit: "cover",
                         }}
                       />
                       <div>
-                        <h5 className="mb-0 fs-6 fw-bold">{item.product.nombre}</h5>
+                        <h5 className="mb-0 fs-6 fw-bold">
+                          {item.product.nombre}
+                        </h5>
                         <small className="text-muted">
                           {formatearPrecio(item.product.precio)}/Kg
                         </small>
@@ -89,12 +96,15 @@ const Carrito = () => {
                         type="number"
                         value={item.quantity}
                         onChange={(e) =>
-                          manejarCambioCantidad(item.product, parseInt(e.target.value, 10))
+                          manejarCambioCantidad(
+                            item.product,
+                            parseInt(e.target.value, 10)
+                          )
                         }
                         className="form-control form-control-sm text-center"
                         min="0"
                         max={maxStock}
-                        style={{ width: '70px', margin: '0 auto' }}
+                        style={{ width: "70px", margin: "0 auto" }}
                       />
                     </div>
 
@@ -115,12 +125,16 @@ const Carrito = () => {
               })}
             </div>
           </div>
+          <ListaDeCompraImagen
+            items={articulosCarrito}
+            imagenFondoUrl="/images/listaCompra2.jpg"
+          />
         </div>
 
         <div className="col-lg-4">
           <div
             className="card shadow-lg border-0 sticky-top"
-            style={{ top: '80px' }}
+            style={{ top: "80px" }}
           >
             <div className="card-body">
               <h4 className="card-title fw-bolder mb-4 border-bottom pb-2">
@@ -139,12 +153,18 @@ const Carrito = () => {
                 </span>
               </div>
 
-              <Link to="/checkout" className="btn btn-success w-100 fw-bold py-2">
-                Procesar Compra{' '}
+              <Link
+                to="/checkout"
+                className="btn btn-success w-100 fw-bold py-2"
+              >
+                Procesar Compra{" "}
                 <i className="bi bi-arrow-right-circle-fill ms-2"></i>
               </Link>
 
-              <Link to="/productos" className="btn btn-outline-secondary w-100 mt-2">
+              <Link
+                to="/productos"
+                className="btn btn-outline-secondary w-100 mt-2"
+              >
                 Continuar Comprando
               </Link>
             </div>

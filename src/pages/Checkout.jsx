@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { usarCarrito } from '../context/GestionCarrito.jsx';
-import { getAllProducts } from '../data/productos.js';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { usarCarrito } from "../context/GestionCarrito.jsx";
+import { getAllProducts } from "../data/productos.js";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -10,13 +10,13 @@ const Checkout = () => {
   const allProducts = getAllProducts();
 
   const [datosFormulario, setDatosFormulario] = useState({
-    nombre: '',
-    apellidos: '',
-    correo: '',
-    calle: '',
-    region: 'Región Metropolitana de Santiago',
-    comuna: '',
-    indicaciones: '',
+    nombre: "",
+    apellidos: "",
+    correo: "",
+    calle: "",
+    region: "Región Metropolitana de Santiago",
+    comuna: "",
+    indicaciones: "",
   });
 
   const [stockError, setStockError] = useState(null);
@@ -28,9 +28,9 @@ const Checkout = () => {
   );
 
   const formatearPrecio = (precio) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP',
+    return new Intl.NumberFormat("es-CL", {
+      style: "currency",
+      currency: "CLP",
       minimumFractionDigits: 0,
     }).format(precio);
   };
@@ -46,7 +46,7 @@ const Checkout = () => {
     setFormError(null);
 
     if (articulosCarrito.length === 0) {
-      navigate('/productos');
+      navigate("/productos");
       return;
     }
 
@@ -56,7 +56,7 @@ const Checkout = () => {
       !datosFormulario.calle ||
       !datosFormulario.comuna
     ) {
-      setFormError('Por favor, completa todos los campos obligatorios (*).');
+      setFormError("Por favor, completa todos los campos obligatorios (*).");
       return;
     }
 
@@ -75,8 +75,8 @@ const Checkout = () => {
       setStockError(
         `El producto "${stockInvalido.item.product.nombre}" excede el stock disponible (${stockInvalido.source.stock}kg).`
       );
-      console.log('REDIRIGIENDO A ERROR POR STOCK...');
-      navigate('/pago-error');
+      console.log("REDIRIGIENDO A ERROR POR STOCK...");
+      navigate("/pago-error");
       return;
     }
 
@@ -84,11 +84,11 @@ const Checkout = () => {
 
     if (pagoExitoso) {
       finalizarCompra();
-      console.log('REDIRIGIENDO A ÉXITO...');
-      navigate('/pago-correcto');
+      console.log("REDIRIGIENDO A ÉXITO...");
+      navigate("/pago-correcto");
     } else {
-      setStockError('Error desconocido en el proceso de pago.');
-      navigate('/pago-error');
+      setStockError("Error desconocido en el proceso de pago.");
+      navigate("/pago-error");
     }
   };
 
@@ -127,7 +127,9 @@ const Checkout = () => {
         <div className="row">
           <div className="col-lg-8">
             <div className="card shadow-sm border-0 mb-4 p-4">
-              <h4 className="border-bottom pb-2 mb-4">1. Información de Contacto</h4>
+              <h4 className="border-bottom pb-2 mb-4">
+                1. Información de Contacto
+              </h4>
 
               <div className="row g-3">
                 <div className="col-md-6">
@@ -173,7 +175,9 @@ const Checkout = () => {
                 </div>
               </div>
 
-              <h4 className="border-bottom pb-2 my-4">2. Dirección de Entrega</h4>
+              <h4 className="border-bottom pb-2 my-4">
+                2. Dirección de Entrega
+              </h4>
 
               <div className="row g-3">
                 <div className="col-12">
@@ -241,7 +245,7 @@ const Checkout = () => {
           <div className="col-lg-4">
             <div
               className="card shadow-lg border-0 sticky-top p-4"
-              style={{ top: '80px' }}
+              style={{ top: "80px" }}
             >
               <h4 className="card-title mb-4 border-bottom pb-2">
                 Resumen y Pago

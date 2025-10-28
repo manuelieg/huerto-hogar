@@ -1,78 +1,76 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
 :root {
-    --color-hoja: #34a853;
-    --color-madera-clara: #faf0e6; 
-    --color-secundario: #212529; 
+--color-hoja: #34a853;
+--color-madera-clara: #faf0e6;
+--color-secundario: #212529;
 }
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--color-madera-clara);
-    min-height: 100vh; 
-    display: flex;
-    flex-direction: column;
+font-family: "Inter", sans-serif;
+background-color: var(--color-madera-clara);
+min-height: 100vh;
+display: flex;
+flex-direction: column;
 }
 
 #root {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+flex-grow: 1;
+display: flex;
+flex-direction: column;
 }
 
 .navbar-top {
-    background-color: var(--color-hoja) !important;
-    border-bottom: 1px solid #287a41;
+background-color: var(--color-hoja) !important;
+border-bottom: 1px solid #287a41;
 }
 
 .navbar-top .navbar-brand,
 .navbar-top .nav-link,
 .navbar-top .text-dark {
-    color: white !important; 
+color: white !important;
 }
 
 .navbar-top .btn-outline-primary {
-    color: white;
-    border-color: white;
+color: white;
+border-color: white;
 }
 .navbar-top .btn-outline-primary:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+background-color: rgba(255, 255, 255, 0.1);
 }
 
 .btn-success {
-    background-color: #157347;
-    border-color: #157347;
+background-color: #157347;
+border-color: #157347;
 }
 
 .navbar-bottom {
-    background-color: var(--color-secundario) !important;
+background-color: var(--color-secundario) !important;
 }
 
-
 .btn-primary {
-    background-color: var(--color-hoja); 
-    border-color: var(--color-hoja);
-    transition: background-color 0.2s;
+background-color: var(--color-hoja);
+border-color: var(--color-hoja);
+transition: background-color 0.2s;
 }
 
 .btn-primary:hover {
-    background-color: #287a41; 
-    border-color: #287a41;
+background-color: #287a41;
+border-color: #287a41;
 }
 
 .card {
-    border-radius: 12px !important;
-    border: none;
+border-radius: 12px !important;
+border: none;
 }
 
 .carousel-caption {
-    background: rgba(0, 0, 0, 0.5); 
-    border-radius: 8px;
-    padding: 10px 15px;
-    bottom: 10%; 
+background: rgba(0, 0, 0, 0.5);
+border-radius: 8px;
+padding: 10px 15px;
+bottom: 10%;
 }
 
 .footer-main {
-    background-color: var(--color-secundario) !important;
-    color: white;
+background-color: var(--color-secundario) !important;
+color: white;
 }
