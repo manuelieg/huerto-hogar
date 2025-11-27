@@ -132,4 +132,3 @@ return (
 }
 
 export default DetalleProducto;
-

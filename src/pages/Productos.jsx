@@ -25,38 +25,37 @@ function Productos() {
     }, [parametroCategoriaID, productosTienda, informacionCategoria]);
 
 
-    return (
-        <div className="container mt-4 mb-5">
-            
-            {informacionCategoria && informacionCategoria.imagen && (
-                <div
-                    className="mb-4 rounded-3 overflow-hidden shadow-sm"
-                    style={{
-                        height: '250px',
-                        backgroundImage: `url(${informacionCategoria.imagen})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }}
-                ></div>
-            )}
+return (
+    <div className="container mt-4 mb-5">
+{informacionCategoria && informacionCategoria.imagen && (
+        <div
+        className="mb-4 rounded-3 overflow-hidden shadow-sm"
+        style={{
+            height: "250px",
+            backgroundImage: `url(${informacionCategoria.imagen})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+        }}
+        ></div>
+    )}
 
-            <div className="mt-4 mb-5">
-                <h2 className="text-center fw-bolder mb-3 text-dark">
-                    {informacionCategoria ? informacionCategoria.nombre : 'Todos los Productos'}
-                </h2>
+    <div className="mt-4 mb-5">
+        <h2 className="text-center fw-bolder mb-3 text-dark">
+        {informacionCategoria
+            ? informacionCategoria.nombre
+            : "Todos los Productos"}
+        </h2>
 
-                {informacionCategoria && (
-                    <p className="text-center text-muted px-3">
-                        {informacionCategoria.descripcion}
-                    </p>
-                )}
-            </div>
+        {informacionCategoria && (
+        <p className="text-center text-muted px-3">
+            {informacionCategoria.descripcion}
+        </p>
+        )}
+    </div>
 
-            <ProductGrid 
-                productos={productosFiltrados} 
-            />
-        </div>
-    );
+    <ProductGrid productos={productosFiltrados} />
+    </div>
+);
 }
 
 export default Productos;

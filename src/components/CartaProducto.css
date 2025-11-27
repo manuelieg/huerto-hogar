@@ -1,0 +1,39 @@
+.add-to-cart-widget {
+  position: relative;
+  padding-bottom: 25px;
+}
+
+.btn.added {
+  animation: button-pop 0.4s ease-out;
+}
+
+@keyframes button-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.added-message {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #198754;
+  font-weight: bold;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.added-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
