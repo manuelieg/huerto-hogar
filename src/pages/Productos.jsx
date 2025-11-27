@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAllProducts } from '../data/productos.js'; 
+import { usarCarrito } from '../context/GestionCarrito.jsx';
 import { categorias } from '../data/categorias.js'; 
 import ProductGrid from '../components/ProductGrid.jsx';
 
 function Productos() {
     const ubicacion = useLocation();
     const parametros = new URLSearchParams(ubicacion.search);
-    const parametroCategoria = parametros.get('categoria'); 
-
+    const parametroCategoriaID = parametros.get('categoria'); 
     const [productosFiltrados, setProductosFiltrados] = useState([]);
-    
-    const informacionCategoria = categorias.find(c => c.id === parametroCategoria);
+    const { productosTienda } = usarCarrito();
+    const informacionCategoria = categorias.find(c => c.id === parametroCategoriaID);
     
     useEffect(() => {
-        const productosBase = getAllProducts(); 
-        let filtrados = productosBase;
-        
-        if (parametroCategoria) {
-            filtrados = filtrados.filter(p => p.id.startsWith(parametroCategoria));
+        if (productosTienda.length === 0) return;
+
+        let filtrados = productosTienda;
+
+        if (informacionCategoria) {
+            filtrados = filtrados.filter(p => p.categoria === informacionCategoria.nombre);
         }
         
         setProductosFiltrados(filtrados);
-    }, [parametroCategoria]);
+    }, [parametroCategoriaID, productosTienda, informacionCategoria]);
 
 
     return (
