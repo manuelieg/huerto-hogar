@@ -1,79 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { usuarios as usuariosBase } from '../data/usuarios.js';
+import React, { useState, useEffect, useRef } from "react";
 
-function AdminUsuarios() {
-    
-    const [listaUsuarios, setListaUsuarios] = useState(() => {
-        const guardado = localStorage.getItem("usuarios");
-        return guardado ? JSON.parse(guardado) : usuariosBase;
-    });
+const API = "http://localhost:8080/api/usuarios";
 
-    const [entradaEditando, setEntradaEditando] = useState(null);
-    const [nuevaEntrada, setNuevaEntrada] = useState({
-        id: '', nombre: '', apellido: '', email: '', password: ''
-    });
-
-    // Estado para controlar si se muestran u ocultan las contraseñas
-    const [mostrarPasswords, setMostrarPasswords] = useState({});
-
-    useEffect(() => {
-        localStorage.setItem("usuarios", JSON.stringify(listaUsuarios));
-    }, [listaUsuarios]);
-
-    const agregarUsuario = () => {
-        if (!nuevaEntrada.id || !nuevaEntrada.nombre || !nuevaEntrada.email) {
-            alert('ID, Nombre y Email son obligatorios.'); 
-            return;
-        }
-        setListaUsuarios([...listaUsuarios, nuevaEntrada]);
-        setNuevaEntrada({ id: '', nombre: '', apellido: '', email: '', password: '' });
-    };
-
-    const eliminarUsuario = (id) => {
-        if (window.confirm('¿Eliminar este usuario?')) { 
-            setListaUsuarios(listaUsuarios.filter(u => u.id !== id));
-        }
-    };
-
-    const iniciarEdicion = (usuario) => setEntradaEditando({ ...usuario });
-    const guardarEdicion = () => {
-        setListaUsuarios(listaUsuarios.map(u => u.id === entradaEditando.id ? entradaEditando : u));
-        setEntradaEditando(null);
-    };
-
-    // Cambiar visibilidad de una contraseña específica
-    const togglePassword = (id) => {
-        setMostrarPasswords(prev => ({ ...prev, [id]: !prev[id] }));
-    };
-
-    const FormularioAgregar = () => (
-        <div className="card mb-4 p-3">
-            <h5>Agregar Nuevo Usuario</h5>
-            <input type="text" placeholder="ID" value={nuevaEntrada.id} onChange={e => setNuevaEntrada({ ...nuevaEntrada, id: e.target.value })} className="form-control mb-2" />
-            <input type="text" placeholder="Nombre" value={nuevaEntrada.nombre} onChange={e => setNuevaEntrada({ ...nuevaEntrada, nombre: e.target.value })} className="form-control mb-2" />
-            <input type="text" placeholder="Apellido" value={nuevaEntrada.apellido} onChange={e => setNuevaEntrada({ ...nuevaEntrada, apellido: e.target.value })} className="form-control mb-2" />
-            <input type="email" placeholder="Email" value={nuevaEntrada.email} onChange={e => setNuevaEntrada({ ...nuevaEntrada, email: e.target.value })} className="form-control mb-2" />
-            <input type="password" placeholder="Contraseña" value={nuevaEntrada.password} onChange={e => setNuevaEntrada({ ...nuevaEntrada, password: e.target.value })} className="form-control mb-2" />
-            <button onClick={agregarUsuario} className="btn btn-success">Agregar Usuario</button>
-        </div>
-    );
-
-    const FormularioEditar = () => {
-        if (!entradaEditando) return null;
-        return (
-            <div className="card mb-4 p-3 border-warning">
-                <h5>Editar Usuario: {entradaEditando.nombre}</h5>
-                <input type="text" placeholder="Nombre" value={entradaEditando.nombre} onChange={e => setEntradaEditando({ ...entradaEditando, nombre: e.target.value })} className="form-control mb-2" />
-                <input type="text" placeholder="Apellido" value={entradaEditando.apellido} onChange={e => setEntradaEditando({ ...entradaEditando, apellido: e.target.value })} className="form-control mb-2" />
-                <input type="email" placeholder="Email" value={entradaEditando.email} onChange={e => setEntradaEditando({ ...entradaEditando, email: e.target.value })} className="form-control mb-2" />
-                <input type="password" placeholder="Contraseña" value={entradaEditando.password} onChange={e => setEntradaEditando({ ...entradaEditando, password: e.target.value })} className="form-control mb-2" />
-                <button onClick={guardarEdicion} className="btn btn-primary me-2">Guardar Cambios</button>
-                <button onClick={() => setEntradaEditando(null)} className="btn btn-secondary">Cancelar</button>
-            </div>
-        );
-    };
-
-    const ListadoUsuarios = () => (
+function ListadoEntradas({ listaUsuarios, setEntradaEditando, eliminarUsuario }) {
+    return (
         <div className="card mb-4 p-3">
             <h5>Listado de Usuarios</h5>
             <table className="table table-striped">
@@ -88,26 +18,26 @@ function AdminUsuarios() {
                     </tr>
                 </thead>
                 <tbody>
-                    {listaUsuarios.map(u => (
+                    {listaUsuarios.map((u) => (
                         <tr key={u.id}>
                             <td>{u.id}</td>
                             <td>{u.nombre}</td>
                             <td>{u.apellido}</td>
                             <td>{u.email}</td>
+                            <td>{u.password}</td>
                             <td>
-                                {mostrarPasswords[u.id] 
-                                    ? u.password 
-                                    : '•'.repeat(u.password.length || 6)}
-                                <button 
-                                    onClick={() => togglePassword(u.id)} 
-                                    className="btn btn-sm btn-outline-secondary ms-2"
+                                <button
+                                    className="btn btn-warning btn-sm me-2"
+                                    onClick={() => setEntradaEditando({ ...u })}
                                 >
-                                    {mostrarPasswords[u.id] ? 'Ocultar' : 'Ver'}
+                                    Editar
                                 </button>
-                            </td>
-                            <td>
-                                <button onClick={() => iniciarEdicion(u)} className="btn btn-sm btn-warning me-2">Editar</button>
-                                <button onClick={() => eliminarUsuario(u.id)} className="btn btn-sm btn-danger">Eliminar</button>
+                                <button
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => eliminarUsuario(u.id)}
+                                >
+                                    Eliminar
+                                </button>
                             </td>
                         </tr>
                     ))}
@@ -115,13 +45,205 @@ function AdminUsuarios() {
             </table>
         </div>
     );
+}
+
+function FormularioAgregar({ nuevaEntrada, setNuevaEntrada, agregarUsuario, addRef }) {
+    return (
+        <div ref={addRef} className="card mb-4 p-3">
+            <h5>Agregar Nuevo Usuario</h5>
+
+            <input
+                className="form-control mb-2"
+                placeholder="ID"
+                value={nuevaEntrada.id}
+                onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, id: e.target.value })}
+            />
+
+            <input
+                className="form-control mb-2"
+                placeholder="Nombre"
+                value={nuevaEntrada.nombre}
+                onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, nombre: e.target.value })}
+            />
+
+            <input
+                className="form-control mb-2"
+                placeholder="Apellido"
+                value={nuevaEntrada.apellido}
+                onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, apellido: e.target.value })}
+            />
+
+            <input
+                type="email"
+                className="form-control mb-2"
+                placeholder="Email"
+                value={nuevaEntrada.email}
+                onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, email: e.target.value })}
+            />
+
+            <input
+                type="password"
+                className="form-control mb-2"
+                placeholder="Contraseña"
+                value={nuevaEntrada.password}
+                onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, password: e.target.value })}
+            />
+
+            <button className="btn btn-success" onClick={agregarUsuario}>
+                Agregar Usuario
+            </button>
+        </div>
+    );
+}
+
+function FormularioEditar({ entradaEditando, setEntradaEditando, guardarEdicion, editRef }) {
+    if (!entradaEditando) return null;
+
+    return (
+        <div ref={editRef} className="card mb-4 p-3 border-warning">
+            <h5>Editar Usuario: {entradaEditando.nombre}</h5>
+
+            <input
+                className="form-control mb-2"
+                value={entradaEditando.nombre}
+                onChange={(e) => setEntradaEditando({ ...entradaEditando, nombre: e.target.value })}
+            />
+
+            <input
+                className="form-control mb-2"
+                value={entradaEditando.apellido}
+                onChange={(e) =>
+                    setEntradaEditando({ ...entradaEditando, apellido: e.target.value })
+                }
+            />
+
+            <input
+                type="email"
+                className="form-control mb-2"
+                value={entradaEditando.email}
+                onChange={(e) =>
+                    setEntradaEditando({ ...entradaEditando, email: e.target.value })
+                }
+            />
+
+            <input
+                type="password"
+                className="form-control mb-2"
+                value={entradaEditando.password}
+                onChange={(e) =>
+                    setEntradaEditando({ ...entradaEditando, password: e.target.value })
+                }
+            />
+
+            <button className="btn btn-primary me-2" onClick={guardarEdicion}>
+                Guardar Cambios
+            </button>
+
+            <button className="btn btn-secondary" onClick={() => setEntradaEditando(null)}>
+                Cancelar
+            </button>
+        </div>
+    );
+}
+
+function AdminUsuarios() {
+    const [listaUsuarios, setListaUsuarios] = useState([]);
+    const [nuevaEntrada, setNuevaEntrada] = useState({
+        id: "",
+        nombre: "",
+        apellido: "",
+        email: "",
+        password: "",
+    });
+
+    const [entradaEditando, setEntradaEditando] = useState(null);
+
+    const editRef = useRef(null);
+    const addRef = useRef(null);
+
+    const cargarUsuarios = async () => {
+        try {
+            const res = await fetch(API);
+            const data = await res.json();
+            setListaUsuarios(data);
+        } catch (err) {}
+    };
+
+    useEffect(() => {
+        cargarUsuarios();
+    }, []);
+
+    const agregarUsuario = async () => {
+        if (!nuevaEntrada.id || !nuevaEntrada.nombre || !nuevaEntrada.email) return;
+
+        try {
+            const res = await fetch(API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(nuevaEntrada),
+            });
+
+            const creado = await res.json();
+            setListaUsuarios((prev) => [...prev, creado]);
+
+            setNuevaEntrada({
+                id: "",
+                nombre: "",
+                apellido: "",
+                email: "",
+                password: "",
+            });
+        } catch (err) {}
+    };
+
+    const eliminarUsuario = async (id) => {
+        if (!window.confirm("¿Eliminar este usuario?")) return;
+
+        await fetch(`${API}/${id}`, { method: "DELETE" });
+        setListaUsuarios((prev) => prev.filter((u) => u.id !== id));
+    };
+
+    const guardarEdicion = async () => {
+        try {
+            const res = await fetch(`${API}/${entradaEditando.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(entradaEditando),
+            });
+
+            const actualizado = await res.json();
+
+            setListaUsuarios((prev) =>
+                prev.map((u) => (u.id === actualizado.id ? actualizado : u))
+            );
+
+            setEntradaEditando(null);
+        } catch (err) {}
+    };
 
     return (
         <div className="container mt-4">
             <h2 className="mb-4">Administración de Usuarios</h2>
-            <ListadoUsuarios />
-            <FormularioEditar />
-            <FormularioAgregar />
+
+            <FormularioEditar
+                entradaEditando={entradaEditando}
+                setEntradaEditando={setEntradaEditando}
+                guardarEdicion={guardarEdicion}
+                editRef={editRef}
+            />
+
+            <ListadoEntradas
+                listaUsuarios={listaUsuarios}
+                setEntradaEditando={setEntradaEditando}
+                eliminarUsuario={eliminarUsuario}
+            />
+
+            <FormularioAgregar
+                nuevaEntrada={nuevaEntrada}
+                setNuevaEntrada={setNuevaEntrada}
+                agregarUsuario={agregarUsuario}
+                addRef={addRef}
+            />
         </div>
     );
 }
