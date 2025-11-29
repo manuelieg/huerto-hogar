@@ -1,37 +1,81 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link, useLocation, Navigate } from 'react-router-dom';
 
-const PagoExito = () => {
-  const orderId = "ORD-" + Math.floor(Math.random() * 90000) + 10000;
+function PagoExito() {
+const location = useLocation();
+const { orden } = location.state || {};
+
+if (!orden) {
+    return <Navigate to="/" replace />;
+}
+
+const formatearPrecio = (precio) => {
+    return new Intl.NumberFormat('es-CL', {
+    style: 'currency',
+    currency: 'CLP',
+    minimumFractionDigits: 0,
+    }).format(precio);
+};
 
 return (
-    <div className="container mt-5 pt-5 text-center">
-    <div
-        className="card shadow-lg p-5 border-0"
-        style={{ maxWidth: "600px", margin: "0 auto" }}
-    >
-        <i className="bi bi-check-circle-fill text-success display-1 mb-3"></i>
-        <h1 className="fw-bolder text-success">¡Pago Confirmado!</h1>
-        <p className="lead">Tu orden ha sido procesada correctamente.</p>
-
-        <div className="alert alert-success mt-4">
-        <strong>Número de Orden:</strong> {orderId}
+    <div className="container my-5 text-center">
+    <div className="card shadow-lg border-0 p-5 mx-auto" style={{ maxWidth: '600px' }}>
+        <div className="mb-4 text-success">
+        <i className="bi bi-check-circle-fill display-1"></i>
         </div>
-
-        <p className="mt-4">
-        Recibirás un correo electrónico de confirmación con los detalles de tu
-        compra.
+        
+        <h1 className="fw-bold text-success mb-3">¡Pago Exitoso!</h1>
+        <p className="lead text-muted">
+        Gracias por tu compra. Tu pedido ha sido procesado correctamente.
         </p>
 
-        <Link to="/" className="btn btn-primary mt-3 w-100">
-        Volver al Inicio
+        <div className="alert alert-light border mt-4 text-start">
+        <h5 className="border-bottom pb-2 mb-3 fw-bold">
+            <i className="bi bi-receipt me-2"></i>Detalle de la Boleta
+        </h5>
+        
+        <div className="d-flex justify-content-between mb-2">
+            <span className="text-muted">N° Orden:</span>
+            <span className="fw-bold font-monospace">{orden.codigoBoleta}</span>
+        </div>
+        <div className="d-flex justify-content-between mb-3">
+            <span className="text-muted">Fecha:</span>
+            <span>{new Date(orden.fecha).toLocaleDateString()}</span>
+        </div>
+
+        <table className="table table-sm table-borderless">
+            <thead>
+            <tr className="border-bottom">
+                <th>Producto</th>
+                <th className="text-center">Cant.</th>
+                <th className="text-end">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {orden.detalles?.map((detalle) => (
+                <tr key={detalle.id}>
+                <td>{detalle.producto.nombre}</td>
+                <td className="text-center">{detalle.cantidad}</td>
+                  <td className="text-end">{formatearPrecio(detalle.precioUnitario * detalle.cantidad)}</td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
+
+        <div className="d-flex justify-content-between border-top pt-2 mt-2">
+            <span className="fw-bold fs-5">Total Pagado:</span>
+            <span className="fw-bold fs-5 text-success">{formatearPrecio(orden.total)}</span>
+        </div>
+        </div>
+
+        <div className="mt-4">
+        <Link to="/productos" className="btn btn-primary btn-lg px-5">
+            Seguir Comprando
         </Link>
-        <Link to="/productos" className="btn btn-outline-secondary mt-2 w-100">
-        Seguir Comprando
-        </Link>
+        </div>
     </div>
     </div>
 );
-};
+}
 
 export default PagoExito;
