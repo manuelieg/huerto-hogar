@@ -12,10 +12,15 @@ class ProductoService {
         return axios.get(`${API_URL}/${id}`);
     }
 
+    buscarPorPrefijo(prefijo) {
+        return axios.get(`${API_URL}/buscar?prefijo=${prefijo}`);
+    }
+
     crearProducto(producto) {
         return axios.post(API_URL, producto);
     }
-        actualizarProducto(id, producto) {
+
+    actualizarProducto(id, producto) {
         return axios.put(`${API_URL}/${id}`, producto);
     }
 
@@ -23,4 +28,5 @@ class ProductoService {
         return axios.delete(`${API_URL}/${id}`);
     }
 }
+
 export default new ProductoService();

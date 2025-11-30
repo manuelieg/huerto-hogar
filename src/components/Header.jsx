@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { categorias } from "../data/categorias.js";
-// Importamos los contextos necesarios
+import axios from "axios";
 import { usarCarrito } from "../context/GestionCarrito.jsx";
 import { usarAutenticacion } from "../context/GestionAutenticacion.jsx";
 
@@ -9,11 +8,25 @@ const Header = ({ cartCount = 0 }) => {
 const [dropdownOpen, setDropdownOpen] = useState(false);
 const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 const [busqueda, setBusqueda] = useState("");
-const navigate = useNavigate();
 
+const [categoriasBackend, setCategoriasBackend] = useState([]);
+
+const navigate = useNavigate();
 
 const { productosTienda } = usarCarrito(); 
 const { usuario, estaAutenticado, cerrarSesion } = usarAutenticacion();
+
+useEffect(() => {
+    const obtenerCategorias = async () => {
+    try {
+        const respuesta = await axios.get("http://localhost:8080/api/categorias");
+        setCategoriasBackend(respuesta.data);
+    } catch (error) {
+        console.error("Error al cargar categorías:", error);
+    }
+    };
+    obtenerCategorias();
+}, []);
 
 const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 const toggleUserDropdown = () => setUserDropdownOpen(!userDropdownOpen);
@@ -27,6 +40,7 @@ const manejarBusqueda = (e) => {
     e.preventDefault();
     const texto = busqueda.trim().toLowerCase();
     if (!texto) return;
+
 
     const productoEncontrado = productosTienda.find(
     (p) => 
@@ -46,7 +60,7 @@ const manejarBusqueda = (e) => {
 const manejarCerrarSesion = () => {
     cerrarSesion();
     setUserDropdownOpen(false);
-    navigate("/"); // Volver al inicio
+    navigate("/");
 };
 
 return (
@@ -119,7 +133,6 @@ return (
                 </ul>
             </div>
             ) : (
-
             <>
                 <Link
                 to="/login"
@@ -156,17 +169,21 @@ return (
                 Categorías
             </span>
             <ul className={`dropdown-menu${dropdownOpen ? " show" : ""}`}>
-                {categorias.map((cat) => (
-                <li key={cat.id}>
+                {categoriasBackend.length > 0 ? (
+                categoriasBackend.map((cat) => (
+                    <li key={cat.id}>
                     <Link
-                    className="dropdown-item"
-                    to={cat.link}
-                    onClick={() => setDropdownOpen(false)}
+                        className="dropdown-item"
+                        to={`/productos?categoria=${cat.id}`}
+                        onClick={() => setDropdownOpen(false)}
                     >
-                    {cat.nombre}
+                        {cat.nombre}
                     </Link>
-                </li>
-                ))}
+                    </li>
+                ))
+                ) : (
+                <li><span className="dropdown-item text-muted">Cargando...</span></li>
+                )}
             </ul>
             </li>
 

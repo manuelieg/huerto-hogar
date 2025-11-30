@@ -1,9 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import BlogCard from "../components/BlogCard.jsx";
-import { getAllArticles } from "../data/blog.js";
+import BlogService from "../services/BlogService.js";
 
 function Blog() {
-const articulos = getAllArticles() || [];
+const [articulos, setArticulos] = useState([]);
+const [cargando, setCargando] = useState(true);
+
+useEffect(() => {
+    BlogService.obtenerTodos()
+    .then((response) => {
+        setArticulos(response.data);
+        setCargando(false);
+    })
+    .catch((error) => {
+        console.error("Error al cargar el blog:", error);
+        setCargando(false);
+    });
+}, []);
+
+if (cargando) {
+    return (
+    <div className="container mt-5 pt-5 text-center">
+        <div className="spinner-border text-success" role="status">
+        <span className="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+    );
+}
 
 if (articulos.length === 0) {
     return (

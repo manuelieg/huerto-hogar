@@ -2,11 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 function BlogCard({ article }) {
-const rutaImagen = article.image || "/images/blog/default.jpg";
+const rutaImagen = article.imagen || "/images/blog/default.jpg";
 
 const formatearFecha = (cadenaFecha) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(cadenaFecha).toLocaleDateString("es-ES", options);
+    return new Date(cadenaFecha + 'T00:00:00').toLocaleDateString("es-ES", options);
 };
 
 const enlaceArticulo = `/blog/${article.id}`;
@@ -18,24 +18,26 @@ return (
         <img
             src={rutaImagen}
             className="card-img-top"
-            alt={article.title}
+            alt={article.titulo}
             style={{ height: "200px", objectFit: "cover" }}
         />
         </Link>
 
         <div className="card-body d-flex flex-column">
         <p className="card-text small text-muted mb-2">
-            <i className="bi bi-person-fill me-1"></i> {article.author} |
+            <i className="bi bi-person-fill me-1"></i> {article.autor}
             <i className="bi bi-calendar me-1 ms-2"></i>
-            {formatearFecha(article.date)}
+            {formatearFecha(article.fecha)}
         </p>
 
         <Link to={enlaceArticulo} className="text-decoration-none text-dark">
-            <h5 className="card-title fw-bolder mb-3">{article.title}</h5>
+            <h5 className="card-title fw-bolder mb-3">{article.titulo}</h5> 
         </Link>
 
-        <p className="card-text flex-grow-1">{article.summary}</p>
-
+        <p className="card-text flex-grow-1">
+            {article.contenido ? article.contenido.replace(/<[^>]+>/g, '').substring(0, 100) + '...' : ''}
+        </p>
+        
         <div className="mt-auto pt-2">
             <Link
             to={enlaceArticulo}
