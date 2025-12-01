@@ -24,6 +24,7 @@ import AdminCategorias from "./admin/AdminCategorias.jsx";
 import AdminUsuarios from "./admin/AdminUsuarios.jsx";
 import AdminOrdenes from "./admin/AdminOrdenes.jsx";
 import AdminBlog from "./admin/AdminBlog.jsx";
+import AdminContactos from "./admin/AdminContacto.jsx";
 
 
 function ProtectedRoute({ children }) {
@@ -44,6 +45,7 @@ const hideNavRoutes = [
     "/admin/usuarios",
     "/admin/reportes",
     "/admin/blogs",
+    "/admin/contactos",
 ];
 const hideNav = hideNavRoutes.includes(location.pathname);
 
@@ -127,6 +129,16 @@ return (
             <ProtectedRoute>
                 <Admin>
                 <AdminBlog />
+                </Admin>
+            </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/admin/contactos"
+            element={
+            <ProtectedRoute>
+                <Admin>
+                <AdminContactos />
                 </Admin>
             </ProtectedRoute>
             }

@@ -45,6 +45,11 @@ return (
             <i className="bi bi-box-seam me-2"></i> Blogs
         </Link>
         </li>
+        <li className="nav-item mb-2">
+        <Link to="/admin/contactos" className="nav-link">
+            <i className="bi bi-envelope-fill me-2"></i> Contactos
+        </Link>
+        </li>
         <li className="nav-item mt-auto pt-3 border-top">
         <button
             onClick={manejarCerrarSesion}
