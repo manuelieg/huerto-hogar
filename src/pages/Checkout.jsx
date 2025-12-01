@@ -2,10 +2,8 @@ import React, { useState, useEffect} from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { usarCarrito } from "../context/GestionCarrito.jsx";
 import OrdenService from "../services/OrdenService.js";
-import ListaDeCompraImagen from "../components/ListaDeCompraImagen.jsx";
 import { usarAutenticacion } from "../context/GestionAutenticacion.jsx";
 
-const imagenListaFondo = "/listaCompra.jpg";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -209,12 +207,6 @@ const Checkout = () => {
                 )}
               </button>
 
-              <div className="border-top mt-4 pt-3">
-                <ListaDeCompraImagen 
-                  items={articulosCarrito} 
-                  imagenFondoUrl={imagenListaFondo} 
-                />
-              </div>
             </div>
           </div>
         </div>

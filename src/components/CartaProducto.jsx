@@ -8,6 +8,30 @@ const [cantidad, setCantidad] = useState(1);
 const [isAdded, setIsAdded] = useState(false);
 const { agregarAlCarrito } = usarCarrito();
 
+const obtenerUnidad = (prod) => {
+    const nombre = prod.nombre?.toLowerCase() || "";
+    if (
+    nombre.includes("mantequilla") ||
+    nombre.includes("queso") ||
+    nombre.includes("quesillo")
+    ) {
+    return "g";
+    }
+    if (
+    nombre.includes("leche") ||
+    nombre.includes("yogurt") ||
+    nombre.includes("aceite") ||
+    nombre.includes("té") ||
+    nombre.includes("bebida") ||
+    nombre.includes("jugo")
+    ) {
+    return "ml";
+    }
+    return "kg";
+};
+
+const unidad = obtenerUnidad(producto);
+
 function FormatoPrecio(price) {
     return new Intl.NumberFormat("es-CL", {
     style: "currency",
@@ -33,8 +57,8 @@ function AgregarAlCarrito() {
     setCantidad(1);
     }, 2000);
 }
-const rutaImagen = producto.imagen || "/images/placeholder.png";
 
+const rutaImagen = producto.imagen || "/images/placeholder.png";
 const stockDisponible = producto.stock || 0;
 
 return (
@@ -42,7 +66,7 @@ return (
     <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
         <figure
         style={{ height: "200px", overflow: "hidden" }}
-        className="d-flex justify-content-center align-items-center p-3"
+        className="d-flex justify-content-center align-items-center p-3 mb-0"
         >
         <Link
             to={`/productos/${producto.id}`}
@@ -52,28 +76,36 @@ return (
             src={rutaImagen}
             alt={producto.nombre}
             className="tab-image img-fluid"
-        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
         </Link>
         </figure>
-        <div className="card-body d-flex flex-column text-center pt-0 px-3 pb-2">
-        <h3 className="fs-6 fw-bold mb-1 text-dark">{producto.nombre}</h3>   
-        <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
-            <span className="text-success fw-bolder fs-5">
-            {FormatoPrecio(producto.precio)}/Kg
-            </span>
+
+        <div className="card-body d-flex flex-column text-center pt-0 px-3 pb-3">
+        <h3 className="fs-6 fw-bold mb-2 text-dark">{producto.nombre}</h3>
+
+        <div className="text-success fw-bolder fs-5 mb-1">
+            {FormatoPrecio(producto.precio)} / {unidad}
+        </div>
+
+        <div className="mb-3">
             <span
-            className={`badge border rounded-1 fw-normal px-1 fs-7 lh-1 ${
+            className={`badge border rounded-pill fw-normal px-2 fs-7 ${
                 stockDisponible > 50
-                ? "bg-success-subtle text-success border-success"
-                : "bg-warning-subtle text-warning border-warning"
+                ? "bg-light text-secondary border-secondary-subtle"
+                : "bg-warning-subtle text-warning-emphasis border-warning"
             }`}
             >
-            Stock: {stockDisponible}Kg
-
+            Stock: {stockDisponible} {unidad}
             </span>
         </div>
-        <p className="text-muted small flex-grow-1">{producto.descripcion}</p>
+
+        <p className="text-muted small flex-grow-1 mb-3">
+            {producto.descripcion
+            ? producto.descripcion.substring(0, 50) + "..."
+            : ""}
+        </p>
+
         <div className="add-to-cart-widget mt-auto">
             <div className="d-flex justify-content-center align-items-center gap-2">
             <input
@@ -95,28 +127,28 @@ return (
             />
             <button
                 onClick={AgregarAlCarrito}
-                className={`btn d-flex align-items-center rounded-1 ${
+                className={`btn d-flex align-items-center rounded-1 px-3 ${
                 isAdded ? "btn-success added" : "btn-primary"
                 }`}
                 disabled={stockDisponible === 0 || isAdded}
             >
                 {isAdded ? (
-                "¡Agregado!"
+                "¡Listo!"
                 ) : (
                 <>
-                    <i className="bi bi-cart me-1"></i>
+                    <i className="bi bi-cart-plus me-1"></i>
                     {stockDisponible > 0 ? "Añadir" : "Agotado"}
                 </>
                 )}
             </button>
             </div>
+
             <div className={`added-message ${isAdded ? "show" : ""}`}>
             Agregado al carrito
             </div>
         </div>
         </div>
     </div>
-
     </div>
 );
 }

@@ -58,7 +58,7 @@ return (
         onLogout={cerrarSesion}
         />
     )}
-    <main className="flex-grow-1 mt-5 pt-3">
+    <main className="flex-grow-1">
                        {" "}
         <Routes>
         <Route path="/" element={<Home />} />

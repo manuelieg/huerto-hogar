@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const CarouselMain = ({ imagenes }) => {
 const items = imagenes || [];
@@ -26,26 +27,43 @@ return (
         ></button>
         ))}
     </div>
+
     <div className="carousel-inner">
         {items.map((imagen, index) => (
         <div
             key={index}
             className={`carousel-item ${index === 0 ? "active" : ""}`}
         >
-            <img
-            src={imagen.src}
-            className="d-block w-100"
-            alt={imagen.alt}
-            style={{ maxHeight: "300px", objectFit: "cover" }}
-            />
+            <Link 
+                to={imagen.link || "/productos"} 
+                className="text-decoration-none"
+                style={{ cursor: "pointer" }}
+            >
+                <img
+                src={imagen.src}
+                className="d-block w-100"
+                alt={imagen.alt}
+                  style={{ maxHeight: "400px", objectFit: "cover", filter: "brightness(0.85)" }} // Un poco más oscuro para leer texto
+                />
 
-            <div className="carousel-caption d-none d-md-block">
-            <h5 className="font-bold text-lg">{imagen.titulo}</h5>
-            <p className="text-sm">{imagen.descripcion}</p>
-            </div>
+                <div className="carousel-caption d-none d-md-block">
+                <h3 className="fw-bold text-white text-uppercase" style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.7)" }}>
+                    {imagen.titulo}
+                </h3>
+                <p className="fs-5 text-white" style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.8)" }}>
+                    {imagen.descripcion}
+                </p>
+                <div className="mt-3">
+                    <span className="btn btn-warning fw-bold px-4 rounded-pill shadow-sm">
+                        Ver Ofertas
+                    </span>
+                </div>
+                </div>
+            </Link>
         </div>
         ))}
     </div>
+
     <button
         className="carousel-control-prev"
         type="button"

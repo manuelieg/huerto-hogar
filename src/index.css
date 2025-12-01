@@ -74,3 +74,9 @@ bottom: 10%;
 background-color: var(--color-secundario) !important;
 color: white;
 }
+
+body, html {
+margin: 0;
+padding: 0;
+overflow-x: hidden;
+}
