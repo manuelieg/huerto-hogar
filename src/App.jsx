@@ -23,6 +23,8 @@ import AdminProductos from "./admin/AdminProductos.jsx";
 import AdminCategorias from "./admin/AdminCategorias.jsx";
 import AdminUsuarios from "./admin/AdminUsuarios.jsx";
 import AdminOrdenes from "./admin/AdminOrdenes.jsx";
+import AdminBlog from "./admin/AdminBlog.jsx";
+
 
 function ProtectedRoute({ children }) {
 const { estaAutenticado } = usarAutenticacion();
@@ -114,6 +116,16 @@ return (
             <ProtectedRoute>
                 <Admin>
                 <AdminOrdenes />
+                </Admin>
+            </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/admin/blogs"
+            element={
+            <ProtectedRoute>
+                <Admin>
+                <AdminBlog />
                 </Admin>
             </ProtectedRoute>
             }

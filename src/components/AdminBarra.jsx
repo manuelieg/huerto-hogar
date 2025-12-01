@@ -21,11 +21,6 @@ return (
         </Link>
         </li>
         <li className="nav-item mb-2">
-        <Link to="/admin/ordenes" className="nav-link">
-            <i className="bi bi-box-seam me-2"></i> Órdenes
-        </Link>
-        </li>
-        <li className="nav-item mb-2">
         <Link to="/admin/productos" className="nav-link">
             <i className="bi bi-box-seam me-2"></i> Productos
         </Link>
@@ -38,6 +33,16 @@ return (
         <li className="nav-item mb-2">
         <Link to="/admin/usuarios" className="nav-link">
             <i className="bi bi-people-fill me-2"></i> Usuarios
+        </Link>
+        </li>
+        <li className="nav-item mb-2">
+        <Link to="/admin/ordenes" className="nav-link">
+            <i className="bi bi-box-seam me-2"></i> Órdenes
+        </Link>
+        </li>
+        <li className="nav-item mb-2">
+        <Link to="/admin/blogs" className="nav-link">
+            <i className="bi bi-box-seam me-2"></i> Blogs
         </Link>
         </li>
         <li className="nav-item mt-auto pt-3 border-top">
