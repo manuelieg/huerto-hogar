@@ -8,11 +8,9 @@ const Header = ({ cartCount = 0 }) => {
 const [dropdownOpen, setDropdownOpen] = useState(false);
 const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 const [busqueda, setBusqueda] = useState("");
-
 const [categoriasBackend, setCategoriasBackend] = useState([]);
 
 const navigate = useNavigate();
-
 const { productosTienda } = usarCarrito(); 
 const { usuario, estaAutenticado, cerrarSesion } = usarAutenticacion();
 
@@ -40,7 +38,6 @@ const manejarBusqueda = (e) => {
     e.preventDefault();
     const texto = busqueda.trim().toLowerCase();
     if (!texto) return;
-
 
     const productoEncontrado = productosTienda.find(
     (p) => 
@@ -81,7 +78,6 @@ return (
             className="form-control me-2 rounded-1"
             type="search"
             placeholder="Buscar productos..."
-            aria-label="Buscar"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             />
@@ -159,7 +155,11 @@ return (
             <Link to="/" className="nav-link">Home</Link>
             </li>
 
-            <li className="nav-item dropdown">
+            <li 
+            className="nav-item dropdown"
+            onMouseEnter={() => setDropdownOpen(true)}
+            onMouseLeave={() => setDropdownOpen(false)}
+            >
             <span
                 className="nav-link dropdown-toggle"
                 role="button"
@@ -168,6 +168,7 @@ return (
             >
                 Categorías
             </span>
+
             <ul className={`dropdown-menu${dropdownOpen ? " show" : ""}`}>
                 {categoriasBackend.length > 0 ? (
                 categoriasBackend.map((cat) => (
