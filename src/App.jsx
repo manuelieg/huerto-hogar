@@ -43,6 +43,7 @@ const hideNavRoutes = [
     "/admin/ordenes",
     "/admin/usuarios",
     "/admin/reportes",
+    "/admin/blogs",
 ];
 const hideNav = hideNavRoutes.includes(location.pathname);
 
