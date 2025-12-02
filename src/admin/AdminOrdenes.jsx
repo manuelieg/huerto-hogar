@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API = "http://3.16.215.211:8080./api/ordenes";
+const API = "http://3.16.215.211:8080/api/ordenes";
 
 const FormatoPrecio = (precio) => {
     if (!precio) return "$0";

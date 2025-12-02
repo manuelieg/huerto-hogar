@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API = "http://3.16.215.211:8080./api/contactos";
+const API = "http://3.16.215.211:8080/api/contactos";
 
 
 function ListadoMensajes({ listaMensajes, marcarComoVisto, eliminarMensaje }) {

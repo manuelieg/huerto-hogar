@@ -5,7 +5,7 @@ function PreviewBlog() {
 const [blogs, setBlogs] = useState([]);
 
 useEffect(() => {
-    fetch("http://3.16.215.211:8080./api/blogs")
+    fetch("http://3.16.215.211:8080/api/blogs")
     .then((res) => res.json())
     .then((data) => {
         setBlogs(data.slice(0, 3));
