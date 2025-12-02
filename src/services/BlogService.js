@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/blogs';
+const API_URL = 'http://18.217.238.198:8080/api/blogs';
 
 class BlogService {
     

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const API = "http://localhost:8080/api/categorias";
+const API = "http://18.217.238.198:8080./api/categorias";
 
 function ListadoCategorias({ listaCategorias, setEntradaEditando, eliminarCategoria }) {
     return (

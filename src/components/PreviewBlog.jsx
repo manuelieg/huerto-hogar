@@ -5,7 +5,7 @@ function PreviewBlog() {
 const [blogs, setBlogs] = useState([]);
 
 useEffect(() => {
-    fetch("http://localhost:8080/api/blogs")
+    fetch("http://18.217.238.198:8080./api/blogs")
     .then((res) => res.json())
     .then((data) => {
         setBlogs(data.slice(0, 3));

@@ -20,13 +20,13 @@ useEffect(() => {
         
         if (parametroCategoriaID) {
 
-        urlProductos = `http://localhost:8080/api/productos/buscar?prefijo=${parametroCategoriaID}`;
+        urlProductos = `http://18.217.238.198:8080./api/productos/buscar?prefijo=${parametroCategoriaID}`;
 
-        const respCat = await axios.get(`http://localhost:8080/api/categorias/${parametroCategoriaID}`);
+        const respCat = await axios.get(`http://18.217.238.198:8080./api/categorias/${parametroCategoriaID}`);
         setInfoCategoria(respCat.data);
 
         } else {
-        urlProductos = "http://localhost:8080/api/productos";
+        urlProductos = "http://18.217.238.198:8080./api/productos";
         setInfoCategoria(null);
         }
 

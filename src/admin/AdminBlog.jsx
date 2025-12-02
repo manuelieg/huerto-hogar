@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const API = "http://localhost:8080/api/blogs";
+const API = "http://18.217.238.198:8080./api/blogs";
 
 function ListadoBlogs({ listaBlogs, setBlogEditando, eliminarBlog }) {
     return (
