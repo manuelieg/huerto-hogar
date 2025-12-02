@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const API = "http://18.217.238.198:8080./api/usuarios";
+const API = "http://3.16.215.211:8080./api/usuarios";
 
 function ListadoEntradas({ listaUsuarios, setEntradaEditando, eliminarUsuario }) {
     return (

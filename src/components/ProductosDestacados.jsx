@@ -44,7 +44,7 @@ function formatearPrecio(precio) {
 }
 
 useEffect(() => {
-    fetch("http://18.217.238.198:8080./api/productos")
+    fetch("http://3.16.215.211:8080./api/productos")
     .then((res) => res.json())
     .then((data) => {
         if (data.length > 0) {

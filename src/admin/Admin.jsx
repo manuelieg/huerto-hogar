@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import AdminHeader from "../components/AdminHeader.jsx";
 import AdminBarra from "../components/AdminBarra.jsx";
 
-const API_PRODUCTOS = "http://18.217.238.198:8080./api/productos";
-const API_USUARIOS = "http://18.217.238.198:8080./api/usuarios";
-const API_ORDENES = "http://18.217.238.198:8080./api/ordenes";
-const API_BLOGS = "http://18.217.238.198:8080./api/blogs";
+const API_PRODUCTOS = "http://3.16.215.211:8080./api/productos";
+const API_USUARIOS = "http://3.16.215.211:8080./api/usuarios";
+const API_ORDENES = "http://3.16.215.211:8080./api/ordenes";
+const API_BLOGS = "http://3.16.215.211:8080./api/blogs";
 
 function Admin({ children }) {
   const [productos, setProductos] = useState([]);

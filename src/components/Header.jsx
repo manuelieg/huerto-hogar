@@ -17,7 +17,7 @@ const { usuario, estaAutenticado, cerrarSesion } = usarAutenticacion();
 useEffect(() => {
     const obtenerCategorias = async () => {
     try {
-        const respuesta = await axios.get("http://18.217.238.198:8080./api/categorias");
+        const respuesta = await axios.get("http://3.16.215.211:8080./api/categorias");
         setCategoriasBackend(respuesta.data);
     } catch (error) {
         console.error("Error al cargar categorías:", error);
