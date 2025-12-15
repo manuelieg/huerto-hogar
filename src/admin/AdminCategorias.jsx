@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const API = "http://3.16.215.211:8080/api/categorias";
+import axios from "../services/AxiosConfig";
 
 function ListadoCategorias({ listaCategorias, setEntradaEditando, eliminarCategoria }) {
     return (
@@ -50,7 +50,7 @@ function FormularioAgregar({ nuevaEntrada, setNuevaEntrada, agregarCategoria, ad
 
             <input
                 className="form-control mb-2"
-                placeholder="ID"
+                placeholder="ID (Opcional si es auto)"
                 value={nuevaEntrada.id}
                 onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, id: e.target.value })}
             />
@@ -127,9 +127,9 @@ function AdminCategorias() {
 
     const cargarCategorias = async () => {
         try {
-            const res = await fetch(API);
-            const data = await res.json();
-            setListaCategorias(data);
+            
+            const res = await axios.get("/categorias");
+            setListaCategorias(res.data);
         } catch (err) {
             console.error("Error cargando categorías", err);
         }
@@ -140,50 +140,51 @@ function AdminCategorias() {
     }, []);
 
     const agregarCategoria = async () => {
-        if (!nuevaEntrada.id || !nuevaEntrada.nombre) return;
+        if (!nuevaEntrada.nombre) return;
 
         try {
-            const res = await fetch(API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(nuevaEntrada),
-            });
-
-            const creada = await res.json();
-            setListaCategorias((prev) => [...prev, creada]);
+            
+            const res = await axios.post("/categorias", nuevaEntrada);
+            
+            
+            setListaCategorias((prev) => [...prev, res.data]);
 
             setNuevaEntrada({
                 id: "",
                 nombre: "",
                 descripcion: "",
             });
-        } catch (err) {}
+        } catch (err) {
+            console.error("Error creando categoría", err);
+        }
     };
 
     const eliminarCategoria = async (id) => {
         if (!window.confirm("¿Eliminar esta categoría?")) return;
 
-        await fetch(`${API}/${id}`, { method: "DELETE" });
-
-        setListaCategorias((prev) => prev.filter((c) => c.id !== id));
+        try {
+            
+            await axios.delete(`/categorias/${id}`);
+            setListaCategorias((prev) => prev.filter((c) => c.id !== id));
+        } catch (err) {
+            console.error("Error eliminando categoría", err);
+        }
     };
 
     const guardarEdicion = async () => {
         try {
-            const res = await fetch(`${API}/${entradaEditando.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(entradaEditando),
-            });
-
-            const actualizada = await res.json();
+            
+            const res = await axios.put(`/categorias/${entradaEditando.id}`, entradaEditando);
+            const actualizada = res.data;
 
             setListaCategorias((prev) =>
                 prev.map((c) => (c.id === actualizada.id ? actualizada : c))
             );
 
             setEntradaEditando(null);
-        } catch (err) {}
+        } catch (err) {
+            console.error("Error editando categoría", err);
+        }
     };
 
     return (

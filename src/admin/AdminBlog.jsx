@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
-const API = "http://3.16.215.211:8080/api/blogs";
+import axios from '../services/AxiosConfig'; 
 
 function ListadoBlogs({ listaBlogs, setBlogEditando, eliminarBlog }) {
     return (
@@ -26,15 +25,10 @@ function ListadoBlogs({ listaBlogs, setBlogEditando, eliminarBlog }) {
                             <td>
                                 <button
                                     className="btn btn-warning btn-sm me-2"
-                                    onClick={() => {
-                                        setBlogEditando({
-                                            ...b
-                                        });
-                                    }}
+                                    onClick={() => setBlogEditando({ ...b })}
                                 >
                                     Editar
                                 </button>
-
                                 <button
                                     className="btn btn-danger btn-sm"
                                     onClick={() => eliminarBlog(b.id)}
@@ -54,42 +48,36 @@ function FormularioAgregar({ nuevoBlog, setNuevoBlog, agregarBlog, addRef }) {
     return (
         <div ref={addRef} className="card mb-4 p-3">
             <h5>Crear Nuevo Blog</h5>
-
             <input
                 className="form-control mb-2"
-                placeholder="ID"
+                placeholder="ID (Ej: BLG004)"
                 value={nuevoBlog.id}
                 onChange={(e) => setNuevoBlog({ ...nuevoBlog, id: e.target.value })}
             />
-
             <input
                 className="form-control mb-2"
                 placeholder="Título"
                 value={nuevoBlog.titulo}
                 onChange={(e) => setNuevoBlog({ ...nuevoBlog, titulo: e.target.value })}
             />
-
             <input
                 className="form-control mb-2"
                 placeholder="Autor"
                 value={nuevoBlog.autor}
                 onChange={(e) => setNuevoBlog({ ...nuevoBlog, autor: e.target.value })}
             />
-
             <textarea
                 className="form-control mb-2"
                 placeholder="Contenido"
                 value={nuevoBlog.contenido}
                 onChange={(e) => setNuevoBlog({ ...nuevoBlog, contenido: e.target.value })}
             />
-
             <input
                 className="form-control mb-2"
                 placeholder="URL Imagen"
                 value={nuevoBlog.imagen}
                 onChange={(e) => setNuevoBlog({ ...nuevoBlog, imagen: e.target.value })}
             />
-
             <button className="btn btn-success" onClick={agregarBlog}>
                 Crear Blog
             </button>
@@ -103,43 +91,29 @@ function FormularioEditar({ blogEditando, setBlogEditando, guardarEdicion, editR
     return (
         <div ref={editRef} className="card mb-4 p-3 border-warning">
             <h5>Editar Blog: {blogEditando.titulo}</h5>
-
             <input
                 className="form-control mb-2"
                 value={blogEditando.titulo}
-                onChange={(e) =>
-                    setBlogEditando({ ...blogEditando, titulo: e.target.value })
-                }
+                onChange={(e) => setBlogEditando({ ...blogEditando, titulo: e.target.value })}
             />
-
             <input
                 className="form-control mb-2"
                 value={blogEditando.autor}
-                onChange={(e) =>
-                    setBlogEditando({ ...blogEditando, autor: e.target.value })
-                }
+                onChange={(e) => setBlogEditando({ ...blogEditando, autor: e.target.value })}
             />
-
             <textarea
                 className="form-control mb-2"
                 value={blogEditando.contenido}
-                onChange={(e) =>
-                    setBlogEditando({ ...blogEditando, contenido: e.target.value })
-                }
+                onChange={(e) => setBlogEditando({ ...blogEditando, contenido: e.target.value })}
             />
-
             <input
                 className="form-control mb-2"
                 value={blogEditando.imagen}
-                onChange={(e) =>
-                    setBlogEditando({ ...blogEditando, imagen: e.target.value })
-                }
+                onChange={(e) => setBlogEditando({ ...blogEditando, imagen: e.target.value })}
             />
-
             <button className="btn btn-primary me-2" onClick={guardarEdicion}>
                 Guardar Cambios
             </button>
-
             <button className="btn btn-secondary" onClick={() => setBlogEditando(null)}>
                 Cancelar
             </button>
@@ -162,9 +136,12 @@ function AdminBlogs() {
     const addRef = useRef(null);
 
     const cargarBlogs = async () => {
-        const res = await fetch(API);
-        const data = await res.json();
-        setListaBlogs(data);
+        try {
+            const res = await axios.get("/blogs");
+            setListaBlogs(res.data);
+        } catch (error) {
+            console.error("Error cargando blogs:", error);
+        }
     };
 
     useEffect(() => {
@@ -174,46 +151,40 @@ function AdminBlogs() {
     const agregarBlog = async () => {
         if (!nuevoBlog.id || !nuevoBlog.titulo) return;
 
-        const res = await fetch(API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(nuevoBlog),
-        });
+        try {
+            const res = await axios.post("/blogs", nuevoBlog);
+            setListaBlogs((prev) => [...prev, res.data]);
 
-        const creado = await res.json();
-        setListaBlogs((prev) => [...prev, creado]);
-
-        setNuevoBlog({
-            id: "",
-            titulo: "",
-            contenido: "",
-            autor: "",
-            imagen: ""
-        });
+            setNuevoBlog({ id: "", titulo: "", contenido: "", autor: "", imagen: "" });
+        } catch (error) {
+            console.error("Error creando blog:", error);
+            alert("Error al crear el blog. Revisa la consola.");
+        }
     };
 
     const eliminarBlog = async (id) => {
         if (!window.confirm("¿Eliminar este blog?")) return;
 
-        await fetch(`${API}/${id}`, { method: "DELETE" });
-
-        setListaBlogs((prev) => prev.filter((b) => b.id !== id));
+        try {
+            await axios.delete(`/blogs/${id}`);
+            setListaBlogs((prev) => prev.filter((b) => b.id !== id));
+        } catch (error) {
+            console.error("Error eliminando blog:", error);
+        }
     };
 
+    
     const guardarEdicion = async () => {
-        const res = await fetch(`${API}/${blogEditando.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(blogEditando),
-        });
-
-        const actualizado = await res.json();
-
-        setListaBlogs((prev) =>
-            prev.map((b) => (b.id === actualizado.id ? actualizado : b))
-        );
-
-        setBlogEditando(null);
+        try {
+            const res = await axios.put(`/blogs/${blogEditando.id}`, blogEditando);
+            
+            setListaBlogs((prev) =>
+                prev.map((b) => (b.id === res.data.id ? res.data : b))
+            );
+            setBlogEditando(null);
+        } catch (error) {
+            console.error("Error actualizando blog:", error);
+        }
     };
 
     return (

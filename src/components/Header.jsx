@@ -17,7 +17,7 @@ const { usuario, estaAutenticado, cerrarSesion } = usarAutenticacion();
 useEffect(() => {
     const obtenerCategorias = async () => {
     try {
-        const respuesta = await axios.get("http://3.16.215.211:8080/api/categorias");
+        const respuesta = await axios.get("http://localhost:8080/api/categorias");
         setCategoriasBackend(respuesta.data);
     } catch (error) {
         console.error("Error al cargar categorías:", error);
@@ -102,7 +102,9 @@ return (
                 onClick={toggleUserDropdown}
                 >
                 <i className="bi bi-person-circle"></i>
-                <span className="fw-bold">Hola, {usuario.nombre.split(" ")[0]}</span>
+                <span className="fw-bold">
+                    Hola, {usuario?.nombre ? usuario.nombre.split(" ")[0] : "Usuario"}
+                </span>
                 </button>
                 
                 <ul className={`dropdown-menu dropdown-menu-end${userDropdownOpen ? " show" : ""}`}>
@@ -113,8 +115,8 @@ return (
                 </li>
                 <li><hr className="dropdown-divider" /></li>
                 
-                {usuario.rol === 'ADMIN' && (
-                    <li><Link className="dropdown-item" to="/admin">Panel Admin</Link></li>
+                {(usuario.rol === 'ADMIN' || usuario.rol === 'ROLE_ADMIN') && (
+                <li><Link className="dropdown-item" to="/admin">Panel Admin</Link></li>
                 )}
                 
                 <li>

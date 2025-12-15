@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API = "http://3.16.215.211:8080/api/contactos";
-
+import axios from "../services/AxiosConfig";
 
 function ListadoMensajes({ listaMensajes, marcarComoVisto, eliminarMensaje }) {
     return (
@@ -83,9 +82,9 @@ function AdminMensajes() {
 
     const cargarMensajes = async () => {
         try {
-            const res = await fetch(API);
-            const data = await res.json();
-            setListaMensajes(data);
+            
+            const res = await axios.get("/contactos");
+            setListaMensajes(res.data);
         } catch (err) {
             console.error("Error cargando mensajes", err);
         }
@@ -93,17 +92,15 @@ function AdminMensajes() {
 
     const marcarComoVisto = async (id) => {
         try {
-            const res = await fetch(`${API}/${id}/revisado`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' }
-            });
+            
+            
+            const res = await axios.put(`/contactos/${id}/revisado`, {});
 
-            if (res.ok) {
-                const actualizado = await res.json();
-                setListaMensajes((prev) =>
-                    prev.map((msg) => (msg.id === id ? actualizado : msg))
-                );
-            }
+            
+            const actualizado = res.data;
+            setListaMensajes((prev) =>
+                prev.map((msg) => (msg.id === id ? actualizado : msg))
+            );
         } catch (err) {
             console.error("Error al actualizar", err);
         }
@@ -113,7 +110,8 @@ function AdminMensajes() {
         if (!window.confirm("¿Estás seguro de eliminar este mensaje?")) return;
 
         try {
-            await fetch(`${API}/${id}`, { method: "DELETE" });
+            
+            await axios.delete(`/contactos/${id}`);
             setListaMensajes((prev) => prev.filter((msg) => msg.id !== id));
         } catch (err) {
             console.error("Error al eliminar", err);

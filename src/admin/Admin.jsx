@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AdminHeader from "../components/AdminHeader.jsx";
 import AdminBarra from "../components/AdminBarra.jsx";
-
-const API_PRODUCTOS = "http://3.16.215.211:8080/api/productos";
-const API_USUARIOS = "http://3.16.215.211:8080/api/usuarios";
-const API_ORDENES = "http://3.16.215.211:8080/api/ordenes";
-const API_BLOGS = "http://3.16.215.211:8080/api/blogs";
+import axios from "../services/AxiosConfig.js"; 
 
 function Admin({ children }) {
   const [productos, setProductos] = useState([]);
@@ -16,22 +12,20 @@ function Admin({ children }) {
   const cargarDatos = async () => {
     try {
       const [resProd, resUsu, resOrd, resBlog] = await Promise.all([
-        fetch(API_PRODUCTOS),
-        fetch(API_USUARIOS),
-        fetch(API_ORDENES),
-        fetch(API_BLOGS),
+        axios.get("/productos"),
+        axios.get("/usuarios"),
+        axios.get("/ordenes"),
+        axios.get("/blogs"),
       ]);
 
-      const dataProd = await resProd.json();
-      const dataUsu = await resUsu.json();
-      const dataOrd = await resOrd.json();
-      const dataBlog = await resBlog.json();
-
-      setProductos(dataProd);
-      setUsuarios(dataUsu);
-      setOrdenes(dataOrd);
-      setBlogs(dataBlog);
-    } catch (err) {}
+      setProductos(resProd.data);
+      setUsuarios(resUsu.data);
+      setOrdenes(resOrd.data);
+      setBlogs(resBlog.data);
+      
+    } catch (err) {
+      console.error("Error cargando dashboard:", err);
+    }
   };
 
   useEffect(() => {

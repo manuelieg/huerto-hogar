@@ -12,50 +12,33 @@ export const usarAutenticacion = () => {
 };
 
 export const GestionAutenticacionProvider = ({ children }) => {
-    // Estado del usuario logueado (null si no hay nadie)
-    const [usuario, setUsuario] = useState(null);
-    const [estaAutenticado, setEstaAutenticado] = useState(false);
+    const [usuario, setUsuario] = useState(() => {
+        return AuthService.getCurrentUser();
+    });
 
-    // Al iniciar la app, verificar si hay un usuario guardado en localStorage
-    useEffect(() => {
-        const usuarioGuardado = localStorage.getItem('usuario_huerto');
-        if (usuarioGuardado) {
-            try {
-                const user = JSON.parse(usuarioGuardado);
-                setUsuario(user);
-                setEstaAutenticado(true);
-            } catch (error) {
-                console.error("Error al leer usuario del storage:", error);
-                localStorage.removeItem('usuario_huerto');
-            }
-        }
-    }, []);
+    const [estaAutenticado, setEstaAutenticado] = useState(() => {
+        return !!AuthService.getCurrentUser();
+    });
 
-    // Función de Login
     const iniciarSesion = async (email, password) => {
         try {
-            const respuesta = await AuthService.login({ email, password });
-            const usuarioData = respuesta.data;
+            const datosUsuario = await AuthService.login({ email, password });
             
-            // Guardar en estado y en localStorage
-            setUsuario(usuarioData);
+            setUsuario(datosUsuario);
             setEstaAutenticado(true);
-            localStorage.setItem('usuario_huerto', JSON.stringify(usuarioData));
             
             return { success: true };
         } catch (error) {
             console.error("Error de login:", error);
             return { 
                 success: false, 
-                mensaje: error.response?.data || "Credenciales incorrectas" 
+                mensaje: error.response?.data?.message || "Credenciales incorrectas" 
             };
         }
     };
 
-    // Función de Registro
     const registrarse = async (datosUsuario) => {
         try {
-            // El backend espera: { nombre, email, password, rol: "CLIENTE" }
             const usuarioParaEnviar = { ...datosUsuario, rol: "CLIENTE" };
             await AuthService.registrar(usuarioParaEnviar);
             return { success: true };
@@ -68,11 +51,10 @@ export const GestionAutenticacionProvider = ({ children }) => {
         }
     };
 
-    // Función de Logout
     const cerrarSesion = () => {
+        AuthService.logout();
         setUsuario(null);
         setEstaAutenticado(false);
-        localStorage.removeItem('usuario_huerto');
     };
 
     const value = {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-const API = "http://3.16.215.211:8080/api/ordenes";
+import axios from "../services/AxiosConfig";
 
 const FormatoPrecio = (precio) => {
     if (!precio) return "$0";
@@ -27,8 +26,9 @@ function AdminOrdenes() {
 
     const cargarOrdenes = async () => {
         try {
-            const res = await fetch(API);
-            const data = await res.json();
+            const res = await axios.get("/ordenes");
+            
+            const data = res.data;
 
             const ordenadas = Array.isArray(data)
                 ? data.sort((a, b) => b.id - a.id)

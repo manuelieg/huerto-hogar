@@ -20,13 +20,13 @@ useEffect(() => {
         
         if (parametroCategoriaID) {
 
-        urlProductos = `http://3.16.215.211:8080/api/productos/buscar?prefijo=${parametroCategoriaID}`;
+        urlProductos = `http://localhost:8080/api/productos/buscar?prefijo=${parametroCategoriaID}`;
 
-        const respCat = await axios.get(`http://3.16.215.211:8080/api/categorias/${parametroCategoriaID}`);
+        const respCat = await axios.get(`http://localhost:8080/api/categorias/${parametroCategoriaID}`);
         setInfoCategoria(respCat.data);
 
         } else {
-        urlProductos = "http://3.16.215.211:8080/api/productos";
+        urlProductos = "http://localhost:8080/api/productos";
         setInfoCategoria(null);
         }
 
@@ -49,7 +49,6 @@ if (cargando) {
 
 return (
     <div className="container mt-4 mb-5">
-      {/* BANNER DINÁMICO: Viene de MySQL */}
     {infoCategoria && infoCategoria.imagen && (
         <div
         className="mb-4 rounded-3 overflow-hidden shadow-sm"

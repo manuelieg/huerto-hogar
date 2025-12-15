@@ -43,7 +43,7 @@ return (
                 src={imagen.src}
                 className="d-block w-100"
                 alt={imagen.alt}
-                  style={{ maxHeight: "400px", objectFit: "cover", filter: "brightness(0.85)" }} // Un poco más oscuro para leer texto
+                  style={{ maxHeight: "400px", objectFit: "cover", filter: "brightness(0.85)" }} 
                 />
 
                 <div className="carousel-caption d-none d-md-block">

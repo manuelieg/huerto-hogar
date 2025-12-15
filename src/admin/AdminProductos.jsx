@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const API = "http://3.16.215.211:8080/api/productos";
+import axios from "../services/AxiosConfig";
 
 const formatearPrecio = (precio) =>
     new Intl.NumberFormat("es-CL", {
@@ -64,9 +64,10 @@ function FormularioAgregar({ nuevaEntrada, setNuevaEntrada, agregarProducto, add
     return (
         <div ref={addRef} className="card mb-4 p-3">
             <h5>Agregar Nuevo Producto</h5>
+            {/* Nota: Si tu BD genera el ID automático, podrías quitar este input */}
             <input
                 className="form-control mb-2"
-                placeholder="ID"
+                placeholder="ID (Opcional si es automático)"
                 value={nuevaEntrada.id}
                 onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, id: e.target.value })}
             />
@@ -250,10 +251,12 @@ function AdminProductos() {
 
     const cargarProductos = async () => {
         try {
-            const res = await fetch(API);
-            const data = await res.json();
-            setListaProductos(data);
-        } catch (err) {}
+            
+            const res = await axios.get("/productos");
+            setListaProductos(res.data);
+        } catch (err) {
+            console.error("Error cargando productos", err);
+        }
     };
 
     useEffect(() => {
@@ -261,7 +264,7 @@ function AdminProductos() {
     }, []);
 
     const agregarProducto = async () => {
-        if (!nuevaEntrada.id || !nuevaEntrada.nombre) return;
+        if (!nuevaEntrada.nombre) return;
 
         const body = {
             ...nuevaEntrada,
@@ -270,14 +273,11 @@ function AdminProductos() {
         };
 
         try {
-            const res = await fetch(API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
-
-            const creado = await res.json();
-            setListaProductos((prev) => [...prev, creado]);
+            
+            const res = await axios.post("/productos", body);
+            
+            
+            setListaProductos((prev) => [...prev, res.data]);
 
             setNuevaEntrada({
                 id: "",
@@ -288,14 +288,21 @@ function AdminProductos() {
                 stock: "",
                 imagen: "",
             });
-        } catch (err) {}
+        } catch (err) {
+            console.error("Error agregando producto", err);
+        }
     };
 
     const eliminarProducto = async (id) => {
         if (!window.confirm("¿Eliminar este producto?")) return;
 
-        await fetch(`${API}/${id}`, { method: "DELETE" });
-        setListaProductos((prev) => prev.filter((p) => p.id !== id));
+        try {
+            
+            await axios.delete(`/productos/${id}`);
+            setListaProductos((prev) => prev.filter((p) => p.id !== id));
+        } catch (err) {
+            console.error("Error eliminando producto", err);
+        }
     };
 
     const guardarEdicion = async () => {
@@ -306,20 +313,18 @@ function AdminProductos() {
         };
 
         try {
-            const res = await fetch(`${API}/${data.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-
-            const actualizado = await res.json();
+            
+            const res = await axios.put(`/productos/${data.id}`, data);
+            const actualizado = res.data;
 
             setListaProductos((prev) =>
                 prev.map((p) => (p.id === actualizado.id ? actualizado : p))
             );
 
             setEntradaEditando(null);
-        } catch (err) {}
+        } catch (err) {
+            console.error("Error editando producto", err);
+        }
     };
 
     const productosCriticos = listaProductos.filter((p) => p.stock < 50);
