@@ -1,48 +1,126 @@
 import React, { useState, useEffect, useRef } from "react";
-import instanciaAxios from '../services/AxiosConfig'; 
+import ProductoService from "../services/ProductoService";
+import CategoriaService from "../services/CategoriaService";
 
-function ListadoEntradas({ listaUsuarios, setEntradaEditando, eliminarUsuario }) {
+const formatearPrecio = (precio) =>
+    new Intl.NumberFormat("es-CL", {
+        style: "currency",
+        currency: "CLP",
+        minimumFractionDigits: 0,
+    }).format(precio);
+
+function PanelReportes({ listaProductos }) {
+    const totalProductos = listaProductos.length;
+    const stockTotal = listaProductos.reduce((acc, p) => acc + p.stock, 0);
+    const precioPromedio =
+        totalProductos > 0
+            ? listaProductos.reduce((acc, p) => acc + p.precio, 0) / totalProductos
+            : 0;
+
     return (
-        <div className="card mb-4 p-3 shadow-sm">
-            <h5 className="mb-3">Listado de Usuarios</h5>
+        <div className="row mb-4 g-3">
+            <div className="col-md-4">
+                <div className="card border-0 shadow-sm border-start border-primary border-4">
+                    <div className="card-body">
+                        <h6 className="text-muted text-uppercase small">Total Productos</h6>
+                        <h3 className="fw-bold text-primary">{totalProductos}</h3>
+                    </div>
+                </div>
+            </div>
+            <div className="col-md-4">
+                <div className="card border-0 shadow-sm border-start border-success border-4">
+                    <div className="card-body">
+                        <h6 className="text-muted text-uppercase small">Stock Global</h6>
+                        <h3 className="fw-bold text-success">{stockTotal} u.</h3>
+                    </div>
+                </div>
+            </div>
+            <div className="col-md-4">
+                <div className="card border-0 shadow-sm border-start border-info border-4">
+                    <div className="card-body">
+                        <h6 className="text-muted text-uppercase small">Precio Promedio</h6>
+                        <h3 className="fw-bold text-info">{formatearPrecio(precioPromedio)}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function ListadoEntradas({ listaProductos, setEntradaEditando, eliminarProducto }) {
+    return (
+        <div className="card shadow-sm border-0 mb-4">
+            <div className="card-header bg-white py-3">
+                <h5 className="mb-0 fw-bold text-dark">Inventario Actual</h5>
+            </div>
             <div className="table-responsive">
-                <table className="table table-striped table-hover">
-                    <thead className="table-dark">
+                <table className="table table-hover align-middle mb-0">
+                    <thead className="bg-light text-secondary small">
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Acciones</th>
+                            <th className="ps-3">Producto</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Precio</th>
+                            <th className="text-end pe-3">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {listaUsuarios.map((u) => (
-                            <tr key={u.id}>
-                                <td>{u.id}</td>
-                                <td>{u.nombre} {u.apellido}</td>
-                                <td>{u.email}</td>
-                                <td>
-                                    <span className={`badge ${u.rol === 'ROLE_ADMIN' || u.rol === 'ADMIN' ? 'bg-danger' : 'bg-primary'}`}>
-                                        {u.rol === 'ROLE_ADMIN' ? 'ADMINISTRADOR' : 'CLIENTE'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button
-                                        className="btn btn-warning btn-sm me-2"
-                                        onClick={() => setEntradaEditando({ ...u })}
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        className="btn btn-danger btn-sm"
-                                        onClick={() => eliminarUsuario(u.id)}
-                                    >
-                                        Eliminar
-                                    </button>
+                        {listaProductos.length === 0 ? (
+                            <tr>
+                                <td colSpan="5" className="text-center py-4 text-muted">
+                                    No hay productos registrados.
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            listaProductos.map((p) => (
+                                <tr key={p.id}>
+                                    <td className="ps-3">
+                                        <div className="d-flex align-items-center">
+                                            {p.imagen ? (
+                                                <img
+                                                    src={p.imagen}
+                                                    alt={p.nombre}
+                                                    className="rounded me-3 border"
+                                                    style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                                                />
+                                            ) : (
+                                                <div className="rounded me-3 bg-light d-flex align-items-center justify-content-center border" style={{ width: "40px", height: "40px" }}>
+                                                    <i className="bi bi-image text-muted"></i>
+                                                </div>
+                                            )}
+                                            <div>
+                                                <div className="fw-bold text-dark">{p.nombre}</div>
+                                                <small className="text-muted">ID: {p.id}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {/* Muestra el ID de la categoría (FR, PL, etc) */}
+                                    <td><span className="badge bg-light text-dark border">{p.categoria}</span></td>
+                                    <td>
+                                        <span className={`badge ${p.stock < 10 ? 'bg-danger' : p.stock < 50 ? 'bg-warning text-dark' : 'bg-success'}`}>
+                                            {p.stock} u.
+                                        </span>
+                                    </td>
+                                    <td className="fw-bold text-primary">{formatearPrecio(p.precio)}</td>
+                                    <td className="text-end pe-3">
+                                        <button
+                                            className="btn btn-sm btn-outline-primary me-2"
+                                            onClick={() => setEntradaEditando({ ...p, precio: String(p.precio), stock: String(p.stock) })}
+                                            title="Editar"
+                                        >
+                                            <i className="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button
+                                            className="btn btn-sm btn-outline-danger"
+                                            onClick={() => eliminarProducto(p.id)}
+                                            title="Eliminar"
+                                        >
+                                            <i className="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -50,210 +128,328 @@ function ListadoEntradas({ listaUsuarios, setEntradaEditando, eliminarUsuario })
     );
 }
 
-function FormularioAgregar({ nuevaEntrada, setNuevaEntrada, agregarUsuario, addRef }) {
-    return (
-        <div ref={addRef} className="card mb-4 p-3 shadow-sm border-success">
-            <h5 className="text-success">Agregar Nuevo Usuario</h5>
+function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, colorBoton, cancelar, listaProductos = [], listaCategorias = [] }) {
+    
+    const existentesEnCategoria = datos.categoria 
+        ? listaProductos.filter(p => p.categoria === datos.categoria)
+        : [];
 
-            <div className="row">
-                <div className="col-md-6 mb-2">
-                    <input
-                        className="form-control"
-                        placeholder="Nombre"
-                        value={nuevaEntrada.nombre}
-                        onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, nombre: e.target.value })}
-                    />
+    const nombreCategoriaSeleccionada = listaCategorias.find(c => c.id === datos.categoria)?.nombre || datos.categoria;
+
+    return (
+        <div className={`card shadow-sm border-0 mb-4 border-top border-${colorBoton} border-4`}>
+            <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h5 className="card-title fw-bold mb-0">{titulo}</h5>
+                    {cancelar && (
+                        <button className="btn btn-close" onClick={cancelar}></button>
+                    )}
                 </div>
-                <div className="col-md-6 mb-2">
-                    <input
-                        className="form-control"
-                        placeholder="Apellido"
-                        value={nuevaEntrada.apellido}
-                        onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, apellido: e.target.value })}
-                    />
+
+                <div className="row g-2">
+                    {/* ID Opcional */}
+                    <div className="col-md-2">
+                        <div className="form-floating">
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="prodId"
+                                placeholder="ID"
+                                value={datos.id}
+                                disabled
+                                readOnly
+                            />
+                            <label htmlFor="prodId">ID (Auto)</label>
+                        </div>
+                    </div>
+
+                    <div className="col-md-5">
+                        <div className="form-floating">
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="prodNombre"
+                                placeholder="Nombre"
+                                value={datos.nombre}
+                                onChange={(e) => setDatos({ ...datos, nombre: e.target.value })}
+                            />
+                            <label htmlFor="prodNombre">Nombre Producto</label>
+                        </div>
+                    </div>
+
+                    <div className="col-md-5">
+                        <div className="form-floating">
+                            <select
+                                className="form-select"
+                                id="prodCat"
+                                value={datos.categoria}
+                                onChange={(e) => setDatos({ ...datos, categoria: e.target.value })}
+                            >
+                                <option value="">-- Seleccionar --</option>
+                                {listaCategorias.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>
+                                        {cat.id} - {cat.nombre} 
+                                    </option>
+                                ))}
+                            </select>
+                            <label htmlFor="prodCat">Categoría Real</label>
+                        </div>
+                    </div>
+
+                    {datos.categoria && (
+                        <div className="col-12">
+                            <div className="alert alert-info py-2 mb-1 shadow-sm">
+                                <small className="d-block fw-bold mb-1">
+                                    <i className="bi bi-info-circle me-1"></i>
+                                    Productos actuales en {nombreCategoriaSeleccionada} ({datos.categoria}):
+                                </small>
+                                <div className="d-flex flex-wrap gap-2">
+                                    {existentesEnCategoria.length > 0 ? (
+                                        existentesEnCategoria.map(p => (
+                                            <span key={p.id} className="badge bg-white text-dark border">
+                                                ID {p.id}: {p.nombre}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-muted small fst-italic">No hay productos aún en esta categoría.</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="col-12">
+                        <div className="form-floating">
+                            <textarea
+                                className="form-control"
+                                id="prodDesc"
+                                placeholder="Descripción"
+                                style={{ height: "80px" }}
+                                value={datos.descripcion}
+                                onChange={(e) => setDatos({ ...datos, descripcion: e.target.value })}
+                            ></textarea>
+                            <label htmlFor="prodDesc">Descripción detallada</label>
+                        </div>
+                    </div>
+
+                    <div className="col-md-4">
+                        <div className="form-floating">
+                            <input
+                                type="number"
+                                min="1"
+                                className="form-control"
+                                id="prodPrecio"
+                                placeholder="Precio"
+                                value={datos.precio}
+                                onChange={(e) => setDatos({ ...datos, precio: e.target.value })}
+                            />
+                            <label htmlFor="prodPrecio">Precio ($)</label>
+                        </div>
+                    </div>
+
+                    <div className="col-md-4">
+                        <div className="form-floating">
+                            <input
+                                type="number"
+                                min="0"
+                                className="form-control"
+                                id="prodStock"
+                                placeholder="Stock"
+                                value={datos.stock}
+                                onChange={(e) => setDatos({ ...datos, stock: e.target.value })}
+                            />
+                            <label htmlFor="prodStock">Stock Actual</label>
+                        </div>
+                    </div>
+
+                    <div className="col-md-4">
+                        <div className="form-floating">
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="prodImg"
+                                placeholder="URL Imagen"
+                                value={datos.imagen}
+                                onChange={(e) => setDatos({ ...datos, imagen: e.target.value })}
+                            />
+                            <label htmlFor="prodImg">URL Imagen</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-3 text-end">
+                    {cancelar && (
+                        <button className="btn btn-light me-2" onClick={cancelar}>
+                            Cancelar
+                        </button>
+                    )}
+                    <button className={`btn btn-${colorBoton} px-4`} onClick={accion}>
+                        <i className={`bi bi-${cancelar ? 'check-lg' : 'plus-lg'} me-2`}></i>
+                        {textoBoton}
+                    </button>
                 </div>
             </div>
-
-            <input
-                type="email"
-                className="form-control mb-2"
-                placeholder="Email"
-                value={nuevaEntrada.email}
-                onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, email: e.target.value })}
-            />
-
-            <input
-                type="password"
-                className="form-control mb-2"
-                placeholder="Contraseña"
-                value={nuevaEntrada.password}
-                onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, password: e.target.value })}
-            />
-
-            <select 
-                className="form-select mb-3"
-                value={nuevaEntrada.rol}
-                onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, rol: e.target.value })}
-            >
-                <option value="CLIENTE">Cliente</option>
-                <option value="ROLE_ADMIN">Administrador</option>
-            </select>
-
-            <button className="btn btn-success w-100" onClick={agregarUsuario}>
-                Crear Usuario
-            </button>
         </div>
     );
 }
 
-function FormularioEditar({ entradaEditando, setEntradaEditando, guardarEdicion, editRef }) {
-    if (!entradaEditando) return null;
-
-    return (
-        <div ref={editRef} className="card mb-4 p-3 border-warning shadow-sm">
-            <h5 className="text-warning">Editar Usuario: {entradaEditando.nombre}</h5>
-
-            <div className="row">
-                <div className="col-md-6 mb-2">
-                    <input
-                        className="form-control"
-                        value={entradaEditando.nombre}
-                        onChange={(e) => setEntradaEditando({ ...entradaEditando, nombre: e.target.value })}
-                    />
-                </div>
-                <div className="col-md-6 mb-2">
-                    <input
-                        className="form-control"
-                        value={entradaEditando.apellido}
-                        onChange={(e) => setEntradaEditando({ ...entradaEditando, apellido: e.target.value })}
-                    />
-                </div>
-            </div>
-
-            <input
-                type="email"
-                className="form-control mb-2"
-                value={entradaEditando.email}
-                disabled 
-            />
-
-            <label className="form-label text-muted small">Rol del Usuario</label>
-            <select 
-                className="form-select mb-3"
-                value={entradaEditando.rol}
-                onChange={(e) => setEntradaEditando({ ...entradaEditando, rol: e.target.value })}
-            >
-                <option value="CLIENTE">Cliente</option>
-                <option value="ROLE_ADMIN">Administrador</option>
-            </select>
-
-            <div className="d-flex justify-content-end gap-2">
-                <button className="btn btn-secondary" onClick={() => setEntradaEditando(null)}>
-                    Cancelar
-                </button>
-                <button className="btn btn-primary" onClick={guardarEdicion}>
-                    Guardar Cambios
-                </button>
-            </div>
-        </div>
-    );
-}
-
-function AdminUsuarios() {
-    const [listaUsuarios, setListaUsuarios] = useState([]);
+function AdminProductos() {
+    const [listaProductos, setListaProductos] = useState([]);
+    const [listaCategorias, setListaCategorias] = useState([]); 
+    
     const [nuevaEntrada, setNuevaEntrada] = useState({
-        nombre: "",
-        apellido: "",
-        email: "",
-        password: "",
-        rol: "CLIENTE" 
+        id: "", nombre: "", descripcion: "", categoria: "", precio: "", stock: "", imagen: "",
     });
-
     const [entradaEditando, setEntradaEditando] = useState(null);
 
     const editRef = useRef(null);
     const addRef = useRef(null);
 
-    const cargarUsuarios = async () => {
+    const cargarDatos = async () => {
         try {
-            const res = await instanciaAxios.get("/usuarios");
-            setListaUsuarios(res.data);
+            const [resProductos, resCategorias] = await Promise.all([
+                ProductoService.obtenerTodos(),
+                CategoriaService.obtenerTodas()
+            ]);
+            
+            setListaProductos(resProductos.data);
+            setListaCategorias(resCategorias.data);
         } catch (err) {
-            console.error("Error al cargar usuarios", err);
+            console.error("Error cargando datos", err);
         }
     };
 
     useEffect(() => {
-        cargarUsuarios();
+        cargarDatos();
     }, []);
 
-    const agregarUsuario = async () => {
-        if (!nuevaEntrada.nombre || !nuevaEntrada.email || !nuevaEntrada.password) {
-            alert("Faltan datos obligatorios");
+    const agregarProducto = async () => {
+        if (!nuevaEntrada.nombre.trim() || !nuevaEntrada.categoria) {
+            alert("El nombre y la categoría son obligatorios.");
             return;
         }
 
+        const precioNum = parseFloat(nuevaEntrada.precio);
+        const stockNum = parseInt(nuevaEntrada.stock);
+
+        if (!precioNum || precioNum <= 0) {
+            alert("El precio debe ser mayor a $0.");
+            return;
+        }
+
+        if (isNaN(stockNum) || stockNum < 0) {
+            alert("El stock no puede ser negativo.");
+            return;
+        }
+
+        const body = {
+            ...nuevaEntrada,
+            precio: precioNum,
+            stock: stockNum,
+        };
+
         try {
-            const res = await instanciaAxios.post("/usuarios", nuevaEntrada);
-            setListaUsuarios((prev) => [...prev, res.data]);
-            
-            setNuevaEntrada({ nombre: "", apellido: "", email: "", password: "", rol: "CLIENTE" });
+            const res = await ProductoService.crearProducto(body);
+            setListaProductos((prev) => [...prev, res.data]);
+
+            setNuevaEntrada({ id: "", nombre: "", descripcion: "", categoria: "", precio: "", stock: "", imagen: "" });
+            alert("Producto creado con éxito");
         } catch (err) {
-            console.error("Error creando usuario", err);
-            alert("Error al crear usuario.");
+            console.error("Error agregando producto", err);
+            alert("Error al crear el producto. Verifica que la categoría exista.");
         }
     };
 
-    const eliminarUsuario = async (id) => {
-        if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
+    const eliminarProducto = async (id) => {
+        if (!window.confirm("¿Seguro que deseas eliminar este producto? Esta acción no se puede deshacer.")) return;
 
         try {
-            await instanciaAxios.delete(`/usuarios/${id}`);
-            setListaUsuarios((prev) => prev.filter((u) => u.id !== id));
+            await ProductoService.eliminarProducto(id);
+            setListaProductos((prev) => prev.filter((p) => p.id !== id));
         } catch (err) {
-            console.error("Error eliminando", err);
+            console.error("Error eliminando producto", err);
+            alert("Error al eliminar");
         }
     };
 
     const guardarEdicion = async () => {
+        const precioNum = parseFloat(entradaEditando.precio);
+        const stockNum = parseInt(entradaEditando.stock);
+
+        if (!precioNum || precioNum <= 0) {
+            alert("El precio debe ser mayor a $0.");
+            return;
+        }
+
+        const data = {
+            ...entradaEditando,
+            precio: precioNum,
+            stock: stockNum,
+        };
+
         try {
-            const res = await instanciaAxios.put(`/usuarios/${entradaEditando.id}`, entradaEditando);
-            
-            setListaUsuarios((prev) =>
-                prev.map((u) => (u.id === res.data.id ? res.data : u))
+            const res = await ProductoService.actualizarProducto(data.id, data);
+            const actualizado = res.data;
+
+            setListaProductos((prev) =>
+                prev.map((p) => (p.id === actualizado.id ? actualizado : p))
             );
 
             setEntradaEditando(null);
         } catch (err) {
-            console.error("Error editando", err);
+            console.error("Error editando producto", err);
+            alert("Error al actualizar");
         }
     };
 
-    return (
-        <div className="container mt-4">
-            <h2 className="mb-4 text-center">Panel de Usuarios</h2>
+    useEffect(() => {
+        if (entradaEditando && editRef.current) {
+            editRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [entradaEditando]);
 
-            <FormularioEditar
-                entradaEditando={entradaEditando}
-                setEntradaEditando={setEntradaEditando}
-                guardarEdicion={guardarEdicion}
-                editRef={editRef}
-            />
+    return (
+        <div className="container mt-5 mb-5">
+            <h2 className="mb-4 fw-bold text-dark">Gestión de Productos</h2>
+
+            <PanelReportes listaProductos={listaProductos} />
+
+            {entradaEditando && (
+                <div ref={editRef}>
+                    <FormularioProducto
+                        titulo={`Editando: ${entradaEditando.nombre}`}
+                        datos={entradaEditando}
+                        setDatos={setEntradaEditando}
+                        accion={guardarEdicion}
+                        textoBoton="Guardar Cambios"
+                        colorBoton="warning"
+                        cancelar={() => setEntradaEditando(null)}
+                        listaProductos={listaProductos}
+                        listaCategorias={listaCategorias}
+                    />
+                </div>
+            )}
 
             <ListadoEntradas
-                listaUsuarios={listaUsuarios}
+                listaProductos={listaProductos}
                 setEntradaEditando={setEntradaEditando}
-                eliminarUsuario={eliminarUsuario}
+                eliminarProducto={eliminarProducto}
             />
 
-            <FormularioAgregar
-                nuevaEntrada={nuevaEntrada}
-                setNuevaEntrada={setNuevaEntrada}
-                agregarUsuario={agregarUsuario}
-                addRef={addRef}
-            />
+            <div ref={addRef}>
+                <FormularioProducto
+                    titulo="Agregar Nuevo Producto"
+                    datos={nuevaEntrada}
+                    setDatos={setNuevaEntrada}
+                    accion={agregarProducto}
+                    textoBoton="Crear Producto"
+                    colorBoton="success"
+                    listaProductos={listaProductos}
+                    listaCategorias={listaCategorias}
+                />
+            </div>
         </div>
     );
 }
 
-export default AdminUsuarios;
+export default AdminProductos;
