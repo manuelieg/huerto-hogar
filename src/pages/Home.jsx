@@ -39,7 +39,9 @@ const Home = () => {
             Ver todo <i className="bi bi-arrow-right ms-1"></i>
           </Link>
         </div>
-        <ProductosDestacados />
+        
+        <ProductosDestacados limit={4} />
+
         <div className="d-block d-md-none text-center mt-3">
             <Link to="/productos" className="btn btn-outline-dark w-100">Ver todo</Link>
         </div>
@@ -69,10 +71,11 @@ const Home = () => {
             Quizás también te guste
           </h2>
         </div>
-        <ProductosDestacados />
+        
+        <ProductosDestacados limit={4} /> 
       </section>
 
-<section className="py-5 bg-white border-top">
+      <section className="py-5 bg-white border-top">
         <div className="container">
             <h3 className="fw-bold mb-4 text-center">📝 Consejos del Huerto</h3>
             <div className="row justify-content-center">
