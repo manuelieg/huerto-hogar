@@ -17,17 +17,19 @@ const Header = ({ cartCount = 0 }) => {
   const { productosTienda } = usarCarrito(); 
   const { usuario, estaAutenticado, cerrarSesion } = usarAutenticacion();
 
-  useEffect(() => {
-    const obtenerCategorias = async () => {
-      try {
-        const respuesta = await axios.get("/categorias");
-        setCategoriasBackend(respuesta.data);
-      } catch (error) {
-        console.error("Error al cargar categorías:", error);
-      }
-    };
-    obtenerCategorias();
-  }, []);
+  useEffect(() => {
+    const obtenerCategorias = async () => {
+      try {
+        const respuesta = await axios.get("/categorias");
+        const datosSeguros = Array.isArray(respuesta.data) ? respuesta.data : [];
+        setCategoriasBackend(datosSeguros);
+      } catch (error) {
+        console.error("Error al cargar categorías:", error.response || error.message);
+        setCategoriasBackend([]);
+      }
+    };
+    obtenerCategorias();
+  }, []);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const toggleUserDropdown = () => setUserDropdownOpen(!userDropdownOpen);
@@ -226,8 +228,8 @@ const Header = ({ cartCount = 0 }) => {
               </span>
 
               <ul className={`dropdown-menu${dropdownOpen ? " show" : ""}`}>
-                {categoriasBackend.length > 0 ? (
-                  categoriasBackend.map((cat) => (
+                {categoriasBackend.length > 0 ? (
+                  categoriasBackend.map((cat) => (
                     <li key={cat.id}>
                       <Link
                         className="dropdown-item"
