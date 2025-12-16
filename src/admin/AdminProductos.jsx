@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import ProductoService from "../services/ProductoService";
 
-
 const formatearPrecio = (precio) =>
     new Intl.NumberFormat("es-CL", {
         style: "currency",
         currency: "CLP",
         minimumFractionDigits: 0,
     }).format(precio);
-
 
 function PanelReportes({ listaProductos }) {
     const totalProductos = listaProductos.length;
@@ -78,9 +76,9 @@ function ListadoEntradas({ listaProductos, setEntradaEditando, eliminarProducto 
                                     <td className="ps-3">
                                         <div className="d-flex align-items-center">
                                             {p.imagen ? (
-                                                <img 
-                                                    src={p.imagen} 
-                                                    alt={p.nombre} 
+                                                <img
+                                                    src={p.imagen}
+                                                    alt={p.nombre}
                                                     className="rounded me-3 border"
                                                     style={{ width: "40px", height: "40px", objectFit: "cover" }}
                                                 />
@@ -128,7 +126,12 @@ function ListadoEntradas({ listaProductos, setEntradaEditando, eliminarProducto 
     );
 }
 
-function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, colorBoton, cancelar }) {
+function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, colorBoton, cancelar, listaProductos = [] }) {
+    
+    const existentesEnCategoria = datos.categoria 
+        ? listaProductos.filter(p => p.categoria === datos.categoria)
+        : [];
+
     return (
         <div className={`card shadow-sm border-0 mb-4 border-top border-${colorBoton} border-4`}>
             <div className="card-body">
@@ -138,9 +141,8 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
                         <button className="btn btn-close" onClick={cancelar}></button>
                     )}
                 </div>
-                
+
                 <div className="row g-2">
-                    {/* ID Opcional */}
                     <div className="col-md-2">
                         <div className="form-floating">
                             <input
@@ -149,8 +151,8 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
                                 id="prodId"
                                 placeholder="ID"
                                 value={datos.id}
-                                onChange={(e) => setDatos({ ...datos, id: e.target.value })}
-                                disabled={!!cancelar}
+                                disabled
+                                readOnly
                             />
                             <label htmlFor="prodId">ID (Auto)</label>
                         </div>
@@ -172,17 +174,43 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
 
                     <div className="col-md-5">
                         <div className="form-floating">
-                            <input
-                                type="text"
-                                className="form-control"
+                            <select
+                                className="form-select"
                                 id="prodCat"
-                                placeholder="Categoría"
                                 value={datos.categoria}
                                 onChange={(e) => setDatos({ ...datos, categoria: e.target.value })}
-                            />
+                            >
+                                <option value="">-- Seleccionar --</option>
+                                <option value="PL">PL (Plantas)</option>
+                                <option value="VR">VR (Verduras)</option>
+                                <option value="FR">FR (Frutas)</option>
+                                <option value="HE">HE (Herramientas)</option>
+                            </select>
                             <label htmlFor="prodCat">Categoría</label>
                         </div>
                     </div>
+
+                    {datos.categoria && (
+                        <div className="col-12">
+                            <div className="alert alert-info py-2 mb-1 shadow-sm">
+                                <small className="d-block fw-bold mb-1">
+                                    <i className="bi bi-info-circle me-1"></i>
+                                    Productos actuales en {datos.categoria}:
+                                </small>
+                                <div className="d-flex flex-wrap gap-2">
+                                    {existentesEnCategoria.length > 0 ? (
+                                        existentesEnCategoria.map(p => (
+                                            <span key={p.id} className="badge bg-white text-dark border">
+                                                ID {p.id}: {p.nombre}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-muted small fst-italic">No hay productos aún en esta categoría.</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="col-12">
                         <div className="form-floating">
@@ -201,15 +229,13 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
                     <div className="col-md-4">
                         <div className="form-floating">
                             <input
-                                type="text"
+                                type="number"
+                                min="1"
                                 className="form-control"
                                 id="prodPrecio"
                                 placeholder="Precio"
                                 value={datos.precio}
-                                onChange={(e) => {
-                                    const v = e.target.value;
-                                    if (/^\d*$/.test(v)) setDatos({ ...datos, precio: v });
-                                }}
+                                onChange={(e) => setDatos({ ...datos, precio: e.target.value })}
                             />
                             <label htmlFor="prodPrecio">Precio ($)</label>
                         </div>
@@ -218,15 +244,13 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
                     <div className="col-md-4">
                         <div className="form-floating">
                             <input
-                                type="text"
+                                type="number"
+                                min="0"
                                 className="form-control"
                                 id="prodStock"
                                 placeholder="Stock"
                                 value={datos.stock}
-                                onChange={(e) => {
-                                    const v = e.target.value;
-                                    if (/^\d*$/.test(v)) setDatos({ ...datos, stock: v });
-                                }}
+                                onChange={(e) => setDatos({ ...datos, stock: e.target.value })}
                             />
                             <label htmlFor="prodStock">Stock Actual</label>
                         </div>
@@ -287,18 +311,34 @@ function AdminProductos() {
     }, []);
 
     const agregarProducto = async () => {
-        if (!nuevaEntrada.nombre) return alert("El nombre es obligatorio");
+        if (!nuevaEntrada.nombre.trim() || !nuevaEntrada.categoria) {
+            alert("El nombre y la categoría son obligatorios.");
+            return;
+        }
+
+        const precioNum = parseFloat(nuevaEntrada.precio);
+        const stockNum = parseInt(nuevaEntrada.stock);
+
+        if (!precioNum || precioNum <= 0) {
+            alert("El precio debe ser mayor a $0.");
+            return;
+        }
+
+        if (isNaN(stockNum) || stockNum < 0) {
+            alert(" El stock no puede ser negativo.");
+            return;
+        }
 
         const body = {
             ...nuevaEntrada,
-            precio: Number(nuevaEntrada.precio),
-            stock: Number(nuevaEntrada.stock),
+            precio: precioNum,
+            stock: stockNum,
         };
 
         try {
             const res = await ProductoService.crearProducto(body);
-            setListaProductos((prev) => [...prev, res.data]); 
-            
+            setListaProductos((prev) => [...prev, res.data]);
+
             setNuevaEntrada({ id: "", nombre: "", descripcion: "", categoria: "", precio: "", stock: "", imagen: "" });
             alert("Producto creado con éxito");
         } catch (err) {
@@ -320,10 +360,18 @@ function AdminProductos() {
     };
 
     const guardarEdicion = async () => {
+        const precioNum = parseFloat(entradaEditando.precio);
+        const stockNum = parseInt(entradaEditando.stock);
+
+        if (!precioNum || precioNum <= 0) {
+            alert("El precio debe ser mayor a $0.");
+            return;
+        }
+
         const data = {
             ...entradaEditando,
-            precio: Number(entradaEditando.precio),
-            stock: Number(entradaEditando.stock),
+            precio: precioNum,
+            stock: stockNum,
         };
 
         try {
@@ -349,7 +397,7 @@ function AdminProductos() {
 
     return (
         <div className="container mt-5 mb-5">
-            <h2 className="mb-4 fw-bold text-dark">📦 Gestión de Productos</h2>
+            <h2 className="mb-4 fw-bold text-dark">Gestión de Productos</h2>
 
             <PanelReportes listaProductos={listaProductos} />
 
@@ -363,6 +411,7 @@ function AdminProductos() {
                         textoBoton="Guardar Cambios"
                         colorBoton="warning"
                         cancelar={() => setEntradaEditando(null)}
+                        listaProductos={listaProductos}
                     />
                 </div>
             )}
@@ -381,6 +430,7 @@ function AdminProductos() {
                     accion={agregarProducto}
                     textoBoton="Crear Producto"
                     colorBoton="success"
+                    listaProductos={listaProductos}
                 />
             </div>
         </div>
