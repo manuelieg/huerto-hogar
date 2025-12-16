@@ -17,19 +17,24 @@ const Header = ({ cartCount = 0 }) => {
   const { productosTienda } = usarCarrito(); 
   const { usuario, estaAutenticado, cerrarSesion } = usarAutenticacion();
 
-  useEffect(() => {
-    const obtenerCategorias = async () => {
-      try {
-        const respuesta = await axios.get("/categorias");
-        const datosSeguros = Array.isArray(respuesta.data) ? respuesta.data : [];
-        setCategoriasBackend(datosSeguros);
-      } catch (error) {
-        console.error("Error al cargar categorías:", error.response || error.message);
-        setCategoriasBackend([]);
-      }
-    };
-    obtenerCategorias();
-  }, []);
+  useEffect(() => {
+    const obtenerCategorias = async () => {
+      try {
+        const respuesta = await axios.get("/categorias");
+        
+        if (Array.isArray(respuesta.data)) {
+            setCategoriasBackend(respuesta.data);
+        } else {
+            console.warn("La API no devolvió una lista de categorías válida:", respuesta.data);
+            setCategoriasBackend([]);
+        }
+      } catch (error) {
+        console.error("Error al cargar categorías (Header):", error.message);
+        setCategoriasBackend([]);
+      }
+    };
+    obtenerCategorias();
+  }, []);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const toggleUserDropdown = () => setUserDropdownOpen(!userDropdownOpen);
@@ -102,7 +107,7 @@ const Header = ({ cartCount = 0 }) => {
             role="search"
             style={{ maxWidth: "400px", width: "100%" }}
             onSubmit={manejarBusquedaSubmit}
->
+          >
             <div className="w-100">
                 <input
                 className="form-control me-2 rounded-1"
@@ -228,8 +233,8 @@ const Header = ({ cartCount = 0 }) => {
               </span>
 
               <ul className={`dropdown-menu${dropdownOpen ? " show" : ""}`}>
-                {categoriasBackend.length > 0 ? (
-                  categoriasBackend.map((cat) => (
+                {Array.isArray(categoriasBackend) && categoriasBackend.length > 0 ? (
+                  categoriasBackend.map((cat) => (
                     <li key={cat.id}>
                       <Link
                         className="dropdown-item"
@@ -241,7 +246,9 @@ const Header = ({ cartCount = 0 }) => {
                     </li>
                   ))
                 ) : (
-                  <li><span className="dropdown-item text-muted">Cargando...</span></li>
+                  <li><span className="dropdown-item text-muted">
+                    {categoriasBackend.length === 0 ? "Cargando..." : "Sin categorías"}
+                  </span></li>
                 )}
               </ul>
             </li>
