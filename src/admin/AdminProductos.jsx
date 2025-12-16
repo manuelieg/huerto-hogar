@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import ProductoService from "../services/ProductoService";
+import CategoriaService from "../services/CategoriaService";
 
 const formatearPrecio = (precio) =>
     new Intl.NumberFormat("es-CL", {
@@ -93,6 +94,7 @@ function ListadoEntradas({ listaProductos, setEntradaEditando, eliminarProducto 
                                             </div>
                                         </div>
                                     </td>
+                                    {/* Muestra el ID de la categoría (FR, PL, etc) */}
                                     <td><span className="badge bg-light text-dark border">{p.categoria}</span></td>
                                     <td>
                                         <span className={`badge ${p.stock < 10 ? 'bg-danger' : p.stock < 50 ? 'bg-warning text-dark' : 'bg-success'}`}>
@@ -126,11 +128,13 @@ function ListadoEntradas({ listaProductos, setEntradaEditando, eliminarProducto 
     );
 }
 
-function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, colorBoton, cancelar, listaProductos = [] }) {
+function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, colorBoton, cancelar, listaProductos = [], listaCategorias = [] }) {
     
     const existentesEnCategoria = datos.categoria 
         ? listaProductos.filter(p => p.categoria === datos.categoria)
         : [];
+
+    const nombreCategoriaSeleccionada = listaCategorias.find(c => c.id === datos.categoria)?.nombre || datos.categoria;
 
     return (
         <div className={`card shadow-sm border-0 mb-4 border-top border-${colorBoton} border-4`}>
@@ -143,6 +147,7 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
                 </div>
 
                 <div className="row g-2">
+                    {/* ID Opcional */}
                     <div className="col-md-2">
                         <div className="form-floating">
                             <input
@@ -181,12 +186,13 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
                                 onChange={(e) => setDatos({ ...datos, categoria: e.target.value })}
                             >
                                 <option value="">-- Seleccionar --</option>
-                                <option value="PL">PL (Plantas)</option>
-                                <option value="VR">VR (Verduras)</option>
-                                <option value="FR">FR (Frutas)</option>
-                                <option value="HE">HE (Herramientas)</option>
+                                {listaCategorias.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>
+                                        {cat.id} - {cat.nombre} 
+                                    </option>
+                                ))}
                             </select>
-                            <label htmlFor="prodCat">Categoría</label>
+                            <label htmlFor="prodCat">Categoría Real</label>
                         </div>
                     </div>
 
@@ -195,7 +201,7 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
                             <div className="alert alert-info py-2 mb-1 shadow-sm">
                                 <small className="d-block fw-bold mb-1">
                                     <i className="bi bi-info-circle me-1"></i>
-                                    Productos actuales en {datos.categoria}:
+                                    Productos actuales en {nombreCategoriaSeleccionada} ({datos.categoria}):
                                 </small>
                                 <div className="d-flex flex-wrap gap-2">
                                     {existentesEnCategoria.length > 0 ? (
@@ -289,6 +295,8 @@ function FormularioProducto({ titulo, datos, setDatos, accion, textoBoton, color
 
 function AdminProductos() {
     const [listaProductos, setListaProductos] = useState([]);
+    const [listaCategorias, setListaCategorias] = useState([]); 
+    
     const [nuevaEntrada, setNuevaEntrada] = useState({
         id: "", nombre: "", descripcion: "", categoria: "", precio: "", stock: "", imagen: "",
     });
@@ -297,17 +305,22 @@ function AdminProductos() {
     const editRef = useRef(null);
     const addRef = useRef(null);
 
-    const cargarProductos = async () => {
+    const cargarDatos = async () => {
         try {
-            const res = await ProductoService.obtenerTodos();
-            setListaProductos(res.data);
+            const [resProductos, resCategorias] = await Promise.all([
+                ProductoService.obtenerTodos(),
+                CategoriaService.obtenerTodas()
+            ]);
+            
+            setListaProductos(resProductos.data);
+            setListaCategorias(resCategorias.data);
         } catch (err) {
-            console.error("Error cargando productos", err);
+            console.error("Error cargando datos", err);
         }
     };
 
     useEffect(() => {
-        cargarProductos();
+        cargarDatos();
     }, []);
 
     const agregarProducto = async () => {
@@ -325,7 +338,7 @@ function AdminProductos() {
         }
 
         if (isNaN(stockNum) || stockNum < 0) {
-            alert(" El stock no puede ser negativo.");
+            alert("El stock no puede ser negativo.");
             return;
         }
 
@@ -343,7 +356,7 @@ function AdminProductos() {
             alert("Producto creado con éxito");
         } catch (err) {
             console.error("Error agregando producto", err);
-            alert("Error al crear el producto");
+            alert("Error al crear el producto. Verifica que la categoría exista.");
         }
     };
 
@@ -412,6 +425,7 @@ function AdminProductos() {
                         colorBoton="warning"
                         cancelar={() => setEntradaEditando(null)}
                         listaProductos={listaProductos}
+                        listaCategorias={listaCategorias}
                     />
                 </div>
             )}
@@ -431,6 +445,7 @@ function AdminProductos() {
                     textoBoton="Crear Producto"
                     colorBoton="success"
                     listaProductos={listaProductos}
+                    listaCategorias={listaCategorias}
                 />
             </div>
         </div>
