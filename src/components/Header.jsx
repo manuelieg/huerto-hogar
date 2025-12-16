@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import instanciaAxios from "../services/AxiosConfig.js";
 import { usarCarrito } from "../context/GestionCarrito.jsx";
 import { usarAutenticacion } from "../context/GestionAutenticacion.jsx";
 
@@ -20,7 +20,7 @@ const Header = ({ cartCount = 0 }) => {
   useEffect(() => {
     const obtenerCategorias = async () => {
       try {
-        const respuesta = await axios.get("/categorias");
+        const respuesta = await instanciaAxios.get("/categorias");
         
         if (Array.isArray(respuesta.data)) {
             setCategoriasBackend(respuesta.data);

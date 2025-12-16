@@ -1,31 +1,31 @@
-import axios from './AxiosConfig';
+import instanciaAxios from './AxiosConfig';
 
 const API_URL = '/productos';
 
 class ProductoService {
     
     obtenerTodos() {
-        return axios.get(API_URL);
+        return instanciaAxios.get(API_URL);
     }
 
     obtenerPorId(id) {
-        return axios.get(`${API_URL}/${id}`);
+        return instanciaAxios.get(`${API_URL}/${id}`);
     }
 
     buscarPorPrefijo(prefijo) {
-        return axios.get(`${API_URL}/buscar?prefijo=${prefijo}`);
+        return instanciaAxios.get(`${API_URL}/buscar?prefijo=${prefijo}`);
     }
 
     crearProducto(producto) {
-        return axios.post(API_URL, producto);
+        return instanciaAxios.post(API_URL, producto);
     }
 
     actualizarProducto(id, producto) {
-        return axios.put(`${API_URL}/${id}`, producto);
+        return instanciaAxios.put(`${API_URL}/${id}`, producto);
     }
 
     eliminarProducto(id) {
-        return axios.delete(`${API_URL}/${id}`);
+        return instanciaAxios.delete(`${API_URL}/${id}`);
     }
 }
 

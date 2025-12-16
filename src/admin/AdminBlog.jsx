@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from '../services/AxiosConfig'; 
+import instanciaAxios from '../services/AxiosConfig'; 
 
 function ListadoBlogs({ listaBlogs, setBlogEditando, eliminarBlog }) {
     return (
@@ -137,7 +137,7 @@ function AdminBlogs() {
 
     const cargarBlogs = async () => {
         try {
-            const res = await axios.get("/blogs");
+            const res = await instanciaAxios.get("/blogs");
             setListaBlogs(res.data);
         } catch (error) {
             console.error("Error cargando blogs:", error);
@@ -152,7 +152,7 @@ function AdminBlogs() {
         if (!nuevoBlog.id || !nuevoBlog.titulo) return;
 
         try {
-            const res = await axios.post("/blogs", nuevoBlog);
+            const res = await instanciaAxios.post("/blogs", nuevoBlog);
             setListaBlogs((prev) => [...prev, res.data]);
 
             setNuevoBlog({ id: "", titulo: "", contenido: "", autor: "", imagen: "" });
@@ -166,7 +166,7 @@ function AdminBlogs() {
         if (!window.confirm("¿Eliminar este blog?")) return;
 
         try {
-            await axios.delete(`/blogs/${id}`);
+            await instanciaAxios.delete(`/blogs/${id}`);
             setListaBlogs((prev) => prev.filter((b) => b.id !== id));
         } catch (error) {
             console.error("Error eliminando blog:", error);
@@ -176,7 +176,7 @@ function AdminBlogs() {
     
     const guardarEdicion = async () => {
         try {
-            const res = await axios.put(`/blogs/${blogEditando.id}`, blogEditando);
+            const res = await instanciaAxios.put(`/blogs/${blogEditando.id}`, blogEditando);
             
             setListaBlogs((prev) =>
                 prev.map((b) => (b.id === res.data.id ? res.data : b))

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import axios from "../services/AxiosConfig"; 
+import instanciaAxios from "../services/AxiosConfig"; 
 
 function PreviewBlog() {
   const [blogs, setBlogs] = useState([]);
@@ -10,7 +10,7 @@ function PreviewBlog() {
     const cargarBlogs = async () => {
       try {
         
-        const respuesta = await axios.get("/blogs");
+        const respuesta = await instanciaAxios.get("/blogs");
         
         
         setBlogs(respuesta.data.slice(0, 3));

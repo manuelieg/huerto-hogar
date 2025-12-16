@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import axios from "../services/AxiosConfig";
+import instanciaAxios from "../services/AxiosConfig";
 
 function ListadoMensajes({ listaMensajes, marcarComoVisto, eliminarMensaje }) {
     return (
@@ -83,7 +83,7 @@ function AdminMensajes() {
     const cargarMensajes = async () => {
         try {
             
-            const res = await axios.get("/contactos");
+            const res = await instanciaAxios.get("/contactos");
             setListaMensajes(res.data);
         } catch (err) {
             console.error("Error cargando mensajes", err);
@@ -92,9 +92,9 @@ function AdminMensajes() {
 
     const marcarComoVisto = async (id) => {
         try {
-            
-            
-            const res = await axios.put(`/contactos/${id}/revisado`, {});
+
+
+            const res = await instanciaAxios.put(`/contactos/${id}/revisado`, {});
 
             
             const actualizado = res.data;
@@ -110,8 +110,8 @@ function AdminMensajes() {
         if (!window.confirm("¿Estás seguro de eliminar este mensaje?")) return;
 
         try {
-            
-            await axios.delete(`/contactos/${id}`);
+
+            await instanciaAxios.delete(`/contactos/${id}`);
             setListaMensajes((prev) => prev.filter((msg) => msg.id !== id));
         } catch (err) {
             console.error("Error al eliminar", err);

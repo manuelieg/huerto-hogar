@@ -1,4 +1,4 @@
-import axios from 'axios';
+import instanciaAxios from "./AxiosConfig";
 
 const API_URL = '/ordenes';
 
@@ -26,19 +26,19 @@ class OrdenService {
 
     crearOrden(ordenRequest) {
         console.log("Intentando crear orden con datos:", ordenRequest);
-        return axios.post(API_URL, ordenRequest, { headers: this.authHeader() });
+        return instanciaAxios.post(API_URL, ordenRequest, { headers: this.authHeader() });
     }
 
     obtenerMisOrdenes(usuarioId) {
-        return axios.get(`${API_URL}/usuario/${usuarioId}`, { headers: this.authHeader() });
+        return instanciaAxios.get(`${API_URL}/usuario/${usuarioId}`, { headers: this.authHeader() });
     }
     
     obtenerTodasLasOrdenes() {
-        return axios.get(API_URL, { headers: this.authHeader() });
+        return instanciaAxios.get(API_URL, { headers: this.authHeader() });
     }
 
     actualizarEstado(ordenId, nuevoEstado) {
-        return axios.patch(
+        return instanciaAxios.patch(
             `${API_URL}/${ordenId}/estado`,
             { estado: nuevoEstado },
             { headers: this.authHeader() }

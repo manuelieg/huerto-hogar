@@ -1,19 +1,21 @@
-import axios from 'axios';
+import instanciaAxios from "./AxiosConfig";
 
 const API_URL = "/auth";
 
 class AuthService {
 
     registrar(usuario) {
-        return axios.post(`${API_URL}/registro`, usuario);
+        return instanciaAxios.post(`${API_URL}/registro`, usuario);
     }
 
     login(credenciales) {
-        return axios
+        return instanciaAxios
             .post(`${API_URL}/login`, credenciales)
             .then(response => {
                 if (response.data.token) {
                     localStorage.setItem("user", JSON.stringify(response.data));
+                    
+                    localStorage.setItem("token", response.data.token); 
                 }
                 return response.data;
             });
@@ -21,6 +23,7 @@ class AuthService {
 
     logout() {
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
     }
 
     getCurrentUser() {

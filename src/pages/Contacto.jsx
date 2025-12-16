@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import instanciaAxios from "../services/AxiosConfig";
 
 const Contacto = () => {
 const [datosFormulario, setDatosFormulario] = useState({
@@ -25,7 +26,7 @@ const enviarFormulario = async (e) => {
     setEstado({ enviando: true, exito: false, error: null });
 
     try {
-    await axios.post("/contactos", datosFormulario);
+    await instanciaAxios.post("/contactos", datosFormulario);
 
     setEstado({ enviando: false, exito: true, error: null });
     

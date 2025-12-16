@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from '../services/AxiosConfig'; 
+import instanciaAxios from '../services/AxiosConfig'; 
 
 function ListadoEntradas({ listaUsuarios, setEntradaEditando, eliminarUsuario }) {
     return (
@@ -176,7 +176,7 @@ function AdminUsuarios() {
 
     const cargarUsuarios = async () => {
         try {
-            const res = await axios.get("/usuarios");
+            const res = await instanciaAxios.get("/usuarios");
             setListaUsuarios(res.data);
         } catch (err) {
             console.error("Error al cargar usuarios", err);
@@ -194,7 +194,7 @@ function AdminUsuarios() {
         }
 
         try {
-            const res = await axios.post("/usuarios", nuevaEntrada);
+            const res = await instanciaAxios.post("/usuarios", nuevaEntrada);
             setListaUsuarios((prev) => [...prev, res.data]);
             
             setNuevaEntrada({ nombre: "", apellido: "", email: "", password: "", rol: "CLIENTE" });
@@ -208,7 +208,7 @@ function AdminUsuarios() {
         if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
 
         try {
-            await axios.delete(`/usuarios/${id}`);
+            await instanciaAxios.delete(`/usuarios/${id}`);
             setListaUsuarios((prev) => prev.filter((u) => u.id !== id));
         } catch (err) {
             console.error("Error eliminando", err);
@@ -217,7 +217,7 @@ function AdminUsuarios() {
 
     const guardarEdicion = async () => {
         try {
-            const res = await axios.put(`/usuarios/${entradaEditando.id}`, entradaEditando);
+            const res = await instanciaAxios.put(`/usuarios/${entradaEditando.id}`, entradaEditando);
             
             setListaUsuarios((prev) =>
                 prev.map((u) => (u.id === res.data.id ? res.data : u))

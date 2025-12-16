@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from '../services/AxiosConfig';
+import instanciaAxios from '../services/AxiosConfig';
 
 function ProductosDestacados() {
 const [productos, setProductos] = useState([]);
@@ -45,7 +45,7 @@ function formatearPrecio(precio) {
 }
 
 useEffect(() => {
-    axios.get("/productos/destacados") 
+    instanciaAxios.get("/productos/destacados") 
         .then((res) => {
             setProductos(res.data);
         })

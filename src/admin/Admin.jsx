@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "../services/AxiosConfig";
+import instanciaAxios from "../services/AxiosConfig";
 
 function Admin() {
   const [stats, setStats] = useState({
@@ -13,10 +13,10 @@ function Admin() {
     const cargarDatos = async () => {
       try {
         const [resProd, resUsu, resOrd, resBlog] = await Promise.all([
-          axios.get("/productos"),
-          axios.get("/usuarios"),
-          axios.get("/ordenes"),
-          axios.get("/blogs"),
+          instanciaAxios.get("/productos"),
+          instanciaAxios.get("/usuarios"),
+          instanciaAxios.get("/ordenes"),
+          instanciaAxios.get("/blogs"),
         ]);
 
         setStats({

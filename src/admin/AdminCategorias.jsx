@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import axios from "../services/AxiosConfig";
+import instanciaAxios from "../services/AxiosConfig";
 
 function ListadoCategorias({ listaCategorias, setEntradaEditando, eliminarCategoria }) {
     return (
@@ -128,7 +128,7 @@ function AdminCategorias() {
     const cargarCategorias = async () => {
         try {
             
-            const res = await axios.get("/categorias");
+            const res = await instanciaAxios.get("/categorias");
             setListaCategorias(res.data);
         } catch (err) {
             console.error("Error cargando categorías", err);
@@ -143,10 +143,9 @@ function AdminCategorias() {
         if (!nuevaEntrada.nombre) return;
 
         try {
-            
-            const res = await axios.post("/categorias", nuevaEntrada);
-            
-            
+
+            const res = await instanciaAxios.post("/categorias", nuevaEntrada);
+
             setListaCategorias((prev) => [...prev, res.data]);
 
             setNuevaEntrada({
@@ -164,7 +163,7 @@ function AdminCategorias() {
 
         try {
             
-            await axios.delete(`/categorias/${id}`);
+            await instanciaAxios.delete(`/categorias/${id}`);
             setListaCategorias((prev) => prev.filter((c) => c.id !== id));
         } catch (err) {
             console.error("Error eliminando categoría", err);
@@ -173,8 +172,8 @@ function AdminCategorias() {
 
     const guardarEdicion = async () => {
         try {
-            
-            const res = await axios.put(`/categorias/${entradaEditando.id}`, entradaEditando);
+
+            const res = await instanciaAxios.put(`/categorias/${entradaEditando.id}`, entradaEditando);
             const actualizada = res.data;
 
             setListaCategorias((prev) =>

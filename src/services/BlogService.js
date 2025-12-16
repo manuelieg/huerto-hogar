@@ -1,27 +1,27 @@
-import axios from 'axios';
+import instanciaAxios from "./AxiosConfig";
 
 const API_URL = '/blogs';
 
 class BlogService {
     
     obtenerTodos() {
-        return axios.get(API_URL);
+        return instanciaAxios.get(API_URL);
     }
 
     obtenerPorId(id) {
-        return axios.get(`${API_URL}/${id}`);
+        return instanciaAxios.get(`${API_URL}/${id}`);
     }
 
     crearBlog(blog) {
-        return axios.post(API_URL, blog);
+        return instanciaAxios.post(API_URL, blog);
     }
 
     actualizarBlog(id, blog) {
-        return axios.put(`${API_URL}/${id}`, blog);
+        return instanciaAxios.put(`${API_URL}/${id}`, blog);
     }
 
     eliminarBlog(id) {
-        return axios.delete(`${API_URL}/${id}`);
+        return instanciaAxios.delete(`${API_URL}/${id}`);
     }
 }
 

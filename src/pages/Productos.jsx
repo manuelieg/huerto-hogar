@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import axios from 'axios';
+import instanciaAxios from '../services/AxiosConfig';
 import ProductoService from '../services/ProductoService';
 import ProductGrid from '../components/ProductGrid';
 
@@ -25,7 +25,7 @@ function Productos() {
                     dataProductos = res.data;
 
                     try {
-                        const resCat = await axios.get(`/categorias/${categoriaID}`);
+                        const resCat = await instanciaAxios.get(`/categorias/${categoriaID}`);
                         setInfoCategoria(resCat.data);
                     } catch (e) {
                         console.warn("No se pudo cargar info de categoría, usando default");
