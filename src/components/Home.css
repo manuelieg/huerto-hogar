@@ -1,0 +1,30 @@
+
+.fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.divider-green {
+    height: 4px;
+    width: 60px;
+    background-color: #198754;
+    border-radius: 2px;
+}
+
+.mw-760 {
+    max-width: 760px;
+}
+
+.bg-light-subtle {
+    background-color: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+    .display-6 {
+        font-size: 1.75rem;
+    }
+}

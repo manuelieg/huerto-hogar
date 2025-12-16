@@ -50,7 +50,7 @@ function FormularioAgregar({ nuevoBlog, setNuevoBlog, agregarBlog, addRef }) {
             <h5>Crear Nuevo Blog</h5>
             <input
                 className="form-control mb-2"
-                placeholder="ID (Ej: BLG004)"
+                placeholder="ID"
                 value={nuevoBlog.id}
                 onChange={(e) => setNuevoBlog({ ...nuevoBlog, id: e.target.value })}
             />

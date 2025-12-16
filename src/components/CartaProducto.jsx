@@ -4,148 +4,137 @@ import { usarCarrito } from "../context/GestionCarrito.jsx";
 import "./CartaProducto.css";
 
 function CartaProducto({ producto }) {
-const [cantidad, setCantidad] = useState(1);
+
+const unidad = producto.unidadMedida || "UNIDAD";
+const esPeso = unidad === "KG";
+
+const step = esPeso ? 0.25 : 1;
+const cantidadInicial = esPeso ? 0.25 : 1;
+
+const [cantidad, setCantidad] = useState(cantidadInicial);
 const [isAdded, setIsAdded] = useState(false);
 const { agregarAlCarrito } = usarCarrito();
 
-const obtenerUnidad = (prod) => {
-    const nombre = prod.nombre?.toLowerCase() || "";
-    if (
-    nombre.includes("mantequilla") ||
-    nombre.includes("queso") ||
-    nombre.includes("quesillo")
-    ) {
-    return "g";
-    }
-    if (
-    nombre.includes("leche") ||
-    nombre.includes("yogurt") ||
-    nombre.includes("aceite") ||
-    nombre.includes("té") ||
-    nombre.includes("bebida") ||
-    nombre.includes("jugo")
-    ) {
-    return "ml";
-    }
-    return "kg";
-};
+const stockDisponible = producto.stock || 0;
+const sinStock = stockDisponible === 0;
+const rutaImagen = producto.imagen || "/images/placeholder.png";
 
-const unidad = obtenerUnidad(producto);
-
-function FormatoPrecio(price) {
-    return new Intl.NumberFormat("es-CL", {
+const formatearPrecio = (price) =>
+    new Intl.NumberFormat("es-CL", {
     style: "currency",
     currency: "CLP",
     minimumFractionDigits: 0,
     }).format(price);
-}
 
-function AgregarAlCarrito() {
-    if (cantidad < 1 || cantidad > producto.stock) {
-    console.error("Cantidad inválida o fuera de stock.");
-    return;
+const incrementar = () => {
+    const nuevaCantidad = cantidad + step;
+    if (nuevaCantidad <= stockDisponible) {
+        setCantidad(esPeso ? parseFloat(nuevaCantidad.toFixed(2)) : nuevaCantidad);
     }
+};
 
+const decrementar = () => {
+    const nuevaCantidad = cantidad - step;
+    if (nuevaCantidad >= step) {
+        setCantidad(esPeso ? parseFloat(nuevaCantidad.toFixed(2)) : nuevaCantidad);
+    }
+};
+
+const manejarAgregar = () => {
+    if (sinStock) return;
+    
     agregarAlCarrito(producto, cantidad);
-    console.log(
-    `[Carrito OK] ${cantidad} x ${producto.nombre} agregado(s) al carrito.`
-    );
-
+    
     setIsAdded(true);
     setTimeout(() => {
     setIsAdded(false);
-    setCantidad(1);
-    }, 2000);
-}
-
-const rutaImagen = producto.imagen || "/images/placeholder.png";
-const stockDisponible = producto.stock || 0;
+    setCantidad(cantidadInicial);
+    }, 1500);
+};
 
 return (
     <div className="col mb-4">
-    <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
-        <figure
-        style={{ height: "200px", overflow: "hidden" }}
-        className="d-flex justify-content-center align-items-center p-3 mb-0"
-        >
-        <Link
-            to={`/productos/${producto.id}`}
-            className="w-100 h-100 d-flex justify-content-center align-items-center"
-        >
+    <div className={`card h-100 border-0 shadow-sm product-card ${sinStock ? "out-of-stock" : ""}`}>
+        
+        <div className="position-relative overflow-hidden card-img-wrapper">
+        {!sinStock && (
+            <span className={`position-absolute top-0 end-0 m-2 badge rounded-pill ${stockDisponible < 20 ? 'bg-warning text-dark' : 'bg-light text-secondary border'}`}>
+            Stock: {stockDisponible} {unidad}
+            </span>
+        )}
+        
+        {sinStock && (
+            <div className="overlay-agotado d-flex align-items-center justify-content-center">
+            <span className="badge bg-danger fs-6">AGOTADO</span>
+            </div>
+        )}
+
+        <Link to={`/productos/${producto.id}`} className="d-block bg-white p-3" style={{height: "220px"}}>
             <img
             src={rutaImagen}
             alt={producto.nombre}
-            className="tab-image img-fluid"
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            className="w-100 h-100"
+            style={{ objectFit: "contain", transition: "transform 0.3s ease" }}
             />
         </Link>
-        </figure>
-
-        <div className="card-body d-flex flex-column text-center pt-0 px-3 pb-3">
-        <h3 className="fs-6 fw-bold mb-2 text-dark">{producto.nombre}</h3>
-
-        <div className="text-success fw-bolder fs-5 mb-1">
-            {FormatoPrecio(producto.precio)} / {unidad}
         </div>
 
-        <div className="mb-3">
-            <span
-            className={`badge border rounded-pill fw-normal px-2 fs-7 ${
-                stockDisponible > 50
-                ? "bg-light text-secondary border-secondary-subtle"
-                : "bg-warning-subtle text-warning-emphasis border-warning"
-            }`}
-            >
-            Stock: {stockDisponible} {unidad}
-            </span>
+        <div className="card-body d-flex flex-column p-3">
+        <div className="mb-2">
+            <small className="text-muted text-uppercase" style={{fontSize: "0.75rem"}}>
+                {producto.categoria?.nombre || producto.categoria || "General"}
+            </small>
+            <h5 className="card-title fw-bold text-dark mb-0 text-truncate" title={producto.nombre}>
+                <Link to={`/productos/${producto.id}`} className="text-decoration-none text-dark">
+                    {producto.nombre}
+                </Link>
+            </h5>
         </div>
 
-        <p className="text-muted small flex-grow-1 mb-3">
-            {producto.descripcion
-            ? producto.descripcion.substring(0, 50) + "..."
-            : ""}
+        <p className="card-text text-muted small flex-grow-1" style={{minHeight: "40px"}}>
+            {producto.descripcion ? (producto.descripcion.length > 55 ? producto.descripcion.substring(0, 55) + "..." : producto.descripcion) : "Sin descripción."}
         </p>
 
-        <div className="add-to-cart-widget mt-auto">
-            <div className="d-flex justify-content-center align-items-center gap-2">
-            <input
-                type="number"
-                className="form-control form-control-sm text-center"
-                style={{ width: "60px" }}
-                min={1}
-                max={stockDisponible}
-                value={cantidad}
-                onChange={(e) =>
-                setCantidad(
-                    Math.max(
-                    1,
-                    Math.min(stockDisponible, Number(e.target.value))
-                    )
-                )
-                }
-                disabled={stockDisponible === 0 || isAdded}
-            />
-            <button
-                onClick={AgregarAlCarrito}
-                className={`btn d-flex align-items-center rounded-1 px-3 ${
-                isAdded ? "btn-success added" : "btn-primary"
-                }`}
-                disabled={stockDisponible === 0 || isAdded}
-            >
-                {isAdded ? (
-                "¡Listo!"
-                ) : (
-                <>
-                    <i className="bi bi-cart-plus me-1"></i>
-                    {stockDisponible > 0 ? "Añadir" : "Agotado"}
-                </>
-                )}
-            </button>
+        <div className="d-flex justify-content-between align-items-end mt-3 mb-3 border-top pt-3">
+            <div className="price-tag">
+                <span className="fs-5 fw-bold text-success">{formatearPrecio(producto.precio)}</span>
+                <span className="text-muted small ms-1">/ {unidad}</span>
             </div>
+        </div>
 
-            <div className={`added-message ${isAdded ? "show" : ""}`}>
-            Agregado al carrito
-            </div>
+        <div className="d-flex gap-2">
+            {!sinStock ? (
+                <>
+                    <div className="input-group input-group-sm quantity-stepper" style={{width: "100px"}}>
+                        <button className="btn btn-outline-secondary" type="button" onClick={decrementar}>-</button>
+                        <input 
+                            type="text" 
+                            className="form-control text-center bg-white border-secondary border-start-0 border-end-0 px-0" 
+                            value={cantidad} 
+                            readOnly 
+                        />
+                        <button className="btn btn-outline-secondary" type="button" onClick={incrementar}>+</button>
+                    </div>
+
+                    <button 
+                        className={`btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center transition-btn ${isAdded ? "btn-success" : "btn-primary"}`}
+                        onClick={manejarAgregar}
+                        disabled={isAdded}
+                    >
+                        {isAdded ? (
+                            <>
+                                <i className="bi bi-check-lg me-1"></i> Listo
+                            </>
+                        ) : (
+                            <>
+                                <i className="bi bi-basket me-1"></i> Añadir
+                            </>
+                        )}
+                    </button>
+                </>
+            ) : (
+                <button className="btn btn-secondary w-100 btn-sm" disabled>Sin Stock</button>
+            )}
         </div>
         </div>
     </div>

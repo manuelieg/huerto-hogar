@@ -5,15 +5,7 @@ import { getAllProducts } from "../data/productos.js";
 import ListaDeCompraImagen from "../components/ListaDeCompraImagen.jsx";
 
 const Carrito = () => {
-  const { articulosCarrito, eliminarDelCarrito, agregarAlCarrito } =
-    usarCarrito();
-
-  const allProducts = getAllProducts();
-
-  const total = articulosCarrito.reduce(
-    (acc, item) => acc + item.product.precio * item.quantity,
-    0
-  );
+  const { articulosCarrito, eliminarDelCarrito, agregarAlCarrito, totalCarrito } = usarCarrito();
 
   const formatearPrecio = (precio) => {
     return new Intl.NumberFormat("es-CL", {
@@ -23,18 +15,17 @@ const Carrito = () => {
     }).format(precio);
   };
 
-  const manejarCambioCantidad = (producto, nuevaCantidad) => {
-    const itemActual = articulosCarrito.find(
-      (item) => item.product.id === producto.id
-    );
-    if (!itemActual) return;
+  const manejarCambioCantidad = (producto, cantidadCambio, esPeso) => {
+    const itemActual = articulosCarrito.find((item) => item.product.id === producto.id);
+    const cantidadActual = itemActual ? itemActual.quantity : 0;
+    const nuevaCantidad = cantidadActual + cantidadCambio;
 
     if (nuevaCantidad <= 0) {
-      eliminarDelCarrito(producto.id);
-    } else {
-      const diferencia = nuevaCantidad - itemActual.quantity;
-      agregarAlCarrito(producto, diferencia);
+        eliminarDelCarrito(producto.id);
+        return;
     }
+
+    agregarAlCarrito(producto, cantidadCambio);
   };
 
   if (articulosCarrito.length === 0) {
@@ -60,10 +51,11 @@ const Carrito = () => {
           <div className="card shadow-sm border-0">
             <div className="card-body">
               {articulosCarrito.map((item) => {
-                const productSource = allProducts.find(
-                  (p) => p.id === item.product.id
-                );
-                const maxStock = productSource ? productSource.stock : 99;
+                const unidad = item.product.unidadMedida || 'UNIDAD';
+                const esPeso = unidad === 'KG';
+                const step = esPeso ? 0.250 : 1;
+
+                const subtotalLinea = Math.round(item.product.precio * item.quantity);
 
                 return (
                   <div
@@ -86,30 +78,38 @@ const Carrito = () => {
                           {item.product.nombre}
                         </h5>
                         <small className="text-muted">
-                          {formatearPrecio(item.product.precio)}/Kg
+                          {formatearPrecio(item.product.precio)} / {unidad}
                         </small>
                       </div>
                     </div>
 
-                    <div className="col-md-2 text-center">
-                      <input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          manejarCambioCantidad(
-                            item.product,
-                            parseInt(e.target.value, 10)
-                          )
-                        }
-                        className="form-control form-control-sm text-center"
-                        min="0"
-                        max={maxStock}
-                        style={{ width: "70px", margin: "0 auto" }}
-                      />
+                    <div className="col-md-3 text-center">
+                      <div className="input-group input-group-sm justify-content-center" style={{ width: "120px", margin: "0 auto" }}>
+                        <button 
+                            className="btn btn-outline-secondary" 
+                            type="button"
+                            onClick={() => manejarCambioCantidad(item.product, -step, esPeso)}
+                        >
+                            -
+                        </button>
+                        <input
+                            type="text"
+                            className="form-control text-center bg-white"
+                            value={item.quantity}
+                            readOnly
+                        />
+                        <button 
+                            className="btn btn-outline-secondary" 
+                            type="button"
+                            onClick={() => manejarCambioCantidad(item.product, step, esPeso)}
+                        >
+                            +
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="col-md-3 text-end fw-bold text-primary">
-                      {formatearPrecio(item.product.precio * item.quantity)}
+                    <div className="col-md-2 text-end fw-bold text-primary">
+                      {formatearPrecio(subtotalLinea)}
                     </div>
 
                     <div className="col-md-2 text-end">
@@ -143,13 +143,13 @@ const Carrito = () => {
 
               <div className="d-flex justify-content-between mb-2">
                 <span>Subtotal:</span>
-                <span>{formatearPrecio(total)}</span>
+                <span>{formatearPrecio(totalCarrito)}</span>
               </div>
 
               <div className="d-flex justify-content-between my-3 border-top pt-3">
                 <span className="fw-bolder fs-5">Total a Pagar:</span>
                 <span className="fw-bolder fs-4 text-success">
-                  {formatearPrecio(total)}
+                  {formatearPrecio(totalCarrito)}
                 </span>
               </div>
 

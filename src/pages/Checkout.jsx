@@ -57,17 +57,12 @@ const Checkout = () => {
     setDatosFormulario((prev) => ({ ...prev, [name]: value }));
   };
 
-  const manejarEnvio = async (e) => {
+const manejarEnvio = async (e) => {
     e.preventDefault();
     setStockError(null);
     setFormError(null);
 
-    if (
-      !datosFormulario.nombre ||
-      !datosFormulario.correo ||
-      !datosFormulario.calle ||
-      !datosFormulario.comuna
-    ) {
+    if (!datosFormulario.nombre || !datosFormulario.correo || !datosFormulario.calle || !datosFormulario.comuna) {
       setFormError("Por favor, completa todos los campos obligatorios (*).");
       return;
     }
@@ -79,8 +74,8 @@ const Checkout = () => {
       cantidad: item.quantity,
     }));
 
-  const ordenRequest = {
-      usuarioId: usuario ? usuario.id : 1, 
+    const ordenRequest = {
+      usuarioId: usuario ? usuario.id : null, 
       items: itemsParaBackend,
     };
 
@@ -89,23 +84,32 @@ const Checkout = () => {
       console.log("Orden creada:", respuesta.data);
       
       const ordenGenerada = respuesta.data;
-
       finalizarCompra(); 
-      
       navigate("/pago-correcto", { state: { orden: ordenGenerada } });
 
     } catch (error) {
-      console.error("Error en la compra:", error);
-      let mensajeError = "Error desconocido al procesar el pago.";
+      console.error("ERROR AL COMPRAR:", error);
       
-      if (error.response && error.response.data) {
-          mensajeError = typeof error.response.data === 'string' 
-              ? error.response.data 
-              : JSON.stringify(error.response.data);
+      let mensajeFinal = "Error desconocido al procesar el pago.";
+
+      if (error.response) {
+        console.log("Status del Error:", error.response.status);
+
+        if (error.response.status === 403 || error.response.status === 401) {
+            mensajeFinal = "Error 403: Necesitas iniciar sesión (Token inválido o inexistente).";
+        } 
+        else if (error.response.data) {
+            mensajeFinal = typeof error.response.data === 'string' 
+                ? error.response.data 
+                : JSON.stringify(error.response.data);
+        }
+      } 
+      else if (error.request) {
+        mensajeFinal = "Error de Conexión: No se pudo contactar con el servidor.";
       }
-      
-      setStockError(mensajeError);
-      navigate("/pago-error", { state: { error: mensajeError } });
+
+      setStockError(mensajeFinal);
+      navigate("/pago-error", { state: { error: mensajeFinal } });
       setProcesando(false);
     }
   };

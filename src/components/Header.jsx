@@ -20,7 +20,7 @@ const Header = ({ cartCount = 0 }) => {
   useEffect(() => {
     const obtenerCategorias = async () => {
       try {
-        const respuesta = await axios.get("http://localhost:8080/api/categorias");
+        const respuesta = await axios.get("/categorias");
         setCategoriasBackend(respuesta.data);
       } catch (error) {
         console.error("Error al cargar categorías:", error);
@@ -75,9 +75,9 @@ const Header = ({ cartCount = 0 }) => {
     if (resultados.length > 0) {
       irAlProducto(resultados[0].id);
     } else {
-       const textoBuscado = normalizarTexto(busqueda.trim());
-       const encontrado = productosTienda.find(p => normalizarTexto(p.nombre).includes(textoBuscado));
-       if(encontrado) irAlProducto(encontrado.id);
+      const textoBuscado = normalizarTexto(busqueda.trim());
+      const encontrado = productosTienda.find(p => normalizarTexto(p.nombre).includes(textoBuscado));
+      if(encontrado) irAlProducto(encontrado.id);
     }
   };
 
@@ -154,12 +154,18 @@ const Header = ({ cartCount = 0 }) => {
                   </span>
                 </button>
                 
+
                 <ul className={`dropdown-menu dropdown-menu-end${userDropdownOpen ? " show" : ""}`}>
                   <li>
                     <span className="dropdown-item-text text-muted small">
                       {usuario.email}
                     </span>
                   </li>
+                                  <li>
+                    <Link className="dropdown-item" to="/mis-compras">
+                    <i className="bi bi-bag-check me-2"></i> Mis Pedidos
+                    </Link>
+                </li>
                   <li><hr className="dropdown-divider" /></li>
                   
                   {(usuario.rol === 'ADMIN' || usuario.rol === 'ROLE_ADMIN') && (

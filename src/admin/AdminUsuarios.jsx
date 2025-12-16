@@ -23,7 +23,6 @@ function ListadoEntradas({ listaUsuarios, setEntradaEditando, eliminarUsuario })
                                 <td>{u.nombre} {u.apellido}</td>
                                 <td>{u.email}</td>
                                 <td>
-                                    {/* Lógica visual para distinguir Admin de Cliente */}
                                     <span className={`badge ${u.rol === 'ROLE_ADMIN' || u.rol === 'ADMIN' ? 'bg-danger' : 'bg-primary'}`}>
                                         {u.rol === 'ROLE_ADMIN' ? 'ADMINISTRADOR' : 'CLIENTE'}
                                     </span>
@@ -91,7 +90,6 @@ function FormularioAgregar({ nuevaEntrada, setNuevaEntrada, agregarUsuario, addR
                 onChange={(e) => setNuevaEntrada({ ...nuevaEntrada, password: e.target.value })}
             />
 
-            {/* SELECTOR DE ROL (NUEVO) */}
             <select 
                 className="form-select mb-3"
                 value={nuevaEntrada.rol}
@@ -139,7 +137,6 @@ function FormularioEditar({ entradaEditando, setEntradaEditando, guardarEdicion,
                 disabled 
             />
 
-            {/* SELECTOR DE ROL PARA EDITAR (VITAL) */}
             <label className="form-label text-muted small">Rol del Usuario</label>
             <select 
                 className="form-select mb-3"

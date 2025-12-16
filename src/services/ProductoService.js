@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from './AxiosConfig';
 
-const API_URL = 'http://localhost:8080/api/productos';
+const API_URL = '/productos';
 
 class ProductoService {
     

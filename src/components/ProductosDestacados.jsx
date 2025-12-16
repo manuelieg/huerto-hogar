@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from '../services/AxiosConfig';
 
 function ProductosDestacados() {
 const [productos, setProductos] = useState([]);
@@ -44,15 +45,13 @@ function formatearPrecio(precio) {
 }
 
 useEffect(() => {
-    fetch("http://localhost:8080/api/productos")
-    .then((res) => res.json())
-    .then((data) => {
-        if (data.length > 0) {
-        const barajados = barajarArray(data);
-        setProductos(barajados.slice(0, 4));
-        }
-    })
-    .catch((err) => console.error("Error cargando destacados:", err));
+    axios.get("/productos/destacados") 
+        .then((res) => {
+            setProductos(res.data);
+        })
+        .catch((err) => {
+            console.error("Error cargando destacados:", err);
+        });
 }, []);
 
 if (productos.length === 0) return null;

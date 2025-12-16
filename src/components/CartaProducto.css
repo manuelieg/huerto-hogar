@@ -1,39 +1,55 @@
-.add-to-cart-widget {
-  position: relative;
-  padding-bottom: 25px;
+
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
 }
 
-.btn.added {
-  animation: button-pop 0.4s ease-out;
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
 }
 
-@keyframes button-pop {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
+.card-img-wrapper img {
+    transition: transform 0.5s ease;
 }
 
-.added-message {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: #198754;
-  font-weight: bold;
-  font-size: 0.9rem;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+.product-card:hover .card-img-wrapper img {
+    transform: scale(1.08);
 }
 
-.added-message.show {
-  opacity: 1;
-  transform: translateY(0);
+.out-of-stock .card-img-wrapper img {
+    filter: grayscale(100%);
+    opacity: 0.5;
+}
+
+.overlay-agotado {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 10;
+}
+
+.quantity-stepper button {
+    width: 30px;
+    font-weight: bold;
+    color: #198754;
+    border-color: #ced4da;
+}
+
+.quantity-stepper button:hover {
+    background-color: #e9ecef;
+    color: #146c43;
+}
+
+.quantity-stepper input {
+    font-weight: 600;
+    color: #333;
+    cursor: default;
+}
+
+.transition-btn {
+    transition: all 0.3s ease;
 }

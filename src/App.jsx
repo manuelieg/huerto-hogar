@@ -25,6 +25,9 @@ import AdminUsuarios from "./admin/AdminUsuarios.jsx";
 import AdminOrdenes from "./admin/AdminOrdenes.jsx";
 import AdminBlog from "./admin/AdminBlog.jsx";
 import AdminContactos from "./admin/AdminContacto.jsx";
+import MisCompras from "./pages/MisCompras.jsx";
+import "./components/Admin.css";
+import AdminLayout from "./admin/AdminLayout.jsx";
 
 
 function ProtectedRoute({ children }) {
@@ -71,78 +74,68 @@ return (
         <Route path="/blog/:id" element={<DetalleBlog />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/mis-compras" element={<MisCompras />} />
         <Route path="/carrito" element={<Carrito />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/pago-correcto" element={<PagoExito />} />
         <Route path="/pago-error" element={<PagoError />} />
-        <Route
-            path="/admin"
-            element={
+        
+        <Route path="/admin" element={
             <ProtectedRoute>
-                <Admin />
+            <AdminLayout>
+                <Admin/>
+            </AdminLayout>
             </ProtectedRoute>
-            }
-        />
-        <Route
-            path="/admin/productos"
-            element={
+        } />
+
+        <Route path="/admin/productos" element={
             <ProtectedRoute>
-                <Admin>
+            <AdminLayout>
                 <AdminProductos />
-                </Admin>
+            </AdminLayout>
             </ProtectedRoute>
-            }
-        />
-        <Route
-            path="/admin/categorias"
-            element={
+        } />
+
+        <Route path="/admin/categorias" element={
             <ProtectedRoute>
-                <Admin>
+            <AdminLayout>
                 <AdminCategorias />
-                </Admin>
+            </AdminLayout>
             </ProtectedRoute>
-            }
-        />
-        <Route
-            path="/admin/usuarios"
-            element={
+        } />
+
+        <Route path="/admin/usuarios" element={
             <ProtectedRoute>
-                <Admin>
+            <AdminLayout>
                 <AdminUsuarios />
-                </Admin>
+            </AdminLayout>
             </ProtectedRoute>
-            }
-        />
-        <Route
-            path="/admin/ordenes"
-            element={
+        } />
+
+        <Route path="/admin/ordenes" element={
             <ProtectedRoute>
-                <Admin>
+            <AdminLayout>
                 <AdminOrdenes />
-                </Admin>
+            </AdminLayout>
             </ProtectedRoute>
-            }
-        />
-        <Route
-            path="/admin/blogs"
-            element={
+        } />
+
+        <Route path="/admin/blogs" element={
             <ProtectedRoute>
-                <Admin>
+            <AdminLayout>
                 <AdminBlog />
-                </Admin>
+            </AdminLayout>
             </ProtectedRoute>
-            }
-        />
-        <Route
-            path="/admin/contactos"
-            element={
+        } />
+
+        <Route path="/admin/contactos" element={
             <ProtectedRoute>
-                <Admin>
+            <AdminLayout>
                 <AdminContactos />
-                </Admin>
+            </AdminLayout>
             </ProtectedRoute>
-            }
-        />
+        } />
+
         </Routes>
     </main>
     {!hideNav && <Footer />}

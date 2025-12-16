@@ -1,96 +1,97 @@
 import React, { useState, useEffect } from "react";
-import AdminHeader from "../components/AdminHeader.jsx";
-import AdminBarra from "../components/AdminBarra.jsx";
-import axios from "../services/AxiosConfig.js"; 
+import axios from "../services/AxiosConfig";
 
-function Admin({ children }) {
-  const [productos, setProductos] = useState([]);
-  const [usuarios, setUsuarios] = useState([]);
-  const [ordenes, setOrdenes] = useState([]);
-  const [blogs, setBlogs] = useState([]);
-
-  const cargarDatos = async () => {
-    try {
-      const [resProd, resUsu, resOrd, resBlog] = await Promise.all([
-        axios.get("/productos"),
-        axios.get("/usuarios"),
-        axios.get("/ordenes"),
-        axios.get("/blogs"),
-      ]);
-
-      setProductos(resProd.data);
-      setUsuarios(resUsu.data);
-      setOrdenes(resOrd.data);
-      setBlogs(resBlog.data);
-      
-    } catch (err) {
-      console.error("Error cargando dashboard:", err);
-    }
-  };
+function Admin() {
+  const [stats, setStats] = useState({
+    productos: 0,
+    usuarios: 0,
+    ordenes: 0,
+    blogs: 0
+  });
 
   useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const [resProd, resUsu, resOrd, resBlog] = await Promise.all([
+          axios.get("/productos"),
+          axios.get("/usuarios"),
+          axios.get("/ordenes"),
+          axios.get("/blogs"),
+        ]);
+
+        setStats({
+          productos: resProd.data.length,
+          usuarios: resUsu.data.length,
+          ordenes: resOrd.data.length,
+          blogs: resBlog.data.length
+        });
+      } catch (err) {
+        console.error("Error cargando dashboard:", err);
+      }
+    };
     cargarDatos();
   }, []);
 
   return (
-    <div className="admin-container">
-      <AdminHeader />
-      <div className="container-fluid main-bg p-4">
-        <div className="row">
-          <div className="col-md-2">
-            <AdminBarra />
-          </div>
+    <div>
+      <div className="page-header">
+        <h2 className="page-title">Panel de Control General</h2>
+        <p className="text-muted">Resumen de actividad del Huerto</p>
+      </div>
 
-          <div className="col-md-10">
-            {children ? (
-              children
-            ) : (
-              <>
-                <h2 className="text-title">Dashboard</h2>
-                <p className="text-subtitle">Resumen de actividades</p>
-
-                <div className="row mb-4">
-                  <div className="col-md-3">
-                    <div className="card card-custom text-center">
-                      <div className="card-body">
-                        <h5 className="card-title">Compras</h5>
-                        <p className="card-text fs-3">{ordenes.length}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="card card-custom text-center">
-                      <div className="card-body">
-                        <h5 className="card-title">Productos</h5>
-                        <p className="card-text fs-3">{productos.length}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="card card-custom text-center">
-                      <div className="card-body">
-                        <h5 className="card-title">Usuarios</h5>
-                        <p className="card-text fs-3">{usuarios.length}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="card card-custom text-center">
-                      <div className="card-body">
-                        <h5 className="card-title">Blogs</h5>
-                        <p className="card-text fs-3">{blogs.length}</p>
-                      </div>
-                    </div>
-                  </div>
-
+      <div className="row g-4">
+        <div className="col-md-3">
+          <div className="card card-admin kpi-card border-primary p-3">
+            <div className="d-flex justify-content-between align-items-center">
+                <div>
+                    <div className="kpi-label text-primary">Órdenes</div>
+                    <div className="kpi-value">{stats.ordenes}</div>
                 </div>
-              </>
-            )}
+                <i className="bi bi-cart-check fs-1 text-primary opacity-25"></i>
+            </div>
           </div>
         </div>
+
+        <div className="col-md-3">
+          <div className="card card-admin kpi-card border-success p-3">
+            <div className="d-flex justify-content-between align-items-center">
+                <div>
+                    <div className="kpi-label text-success">Productos</div>
+                    <div className="kpi-value">{stats.productos}</div>
+                </div>
+                <i className="bi bi-box-seam fs-1 text-success opacity-25"></i>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-3">
+          <div className="card card-admin kpi-card border-warning p-3">
+            <div className="d-flex justify-content-between align-items-center">
+                <div>
+                    <div className="kpi-label text-warning">Usuarios</div>
+                    <div className="kpi-value">{stats.usuarios}</div>
+                </div>
+                <i className="bi bi-people fs-1 text-warning opacity-25"></i>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-3">
+          <div className="card card-admin kpi-card border-info p-3">
+            <div className="d-flex justify-content-between align-items-center">
+                <div>
+                    <div className="kpi-label text-info">Blogs</div>
+                    <div className="kpi-value">{stats.blogs}</div>
+                </div>
+                <i className="bi bi-journal-text fs-1 text-info opacity-25"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 text-center text-muted">
+          <i className="bi bi-bar-chart-line display-1 opacity-25"></i>
+          <p className="mt-3">Selecciona una opción del menú lateral para gestionar.</p>
       </div>
     </div>
   );

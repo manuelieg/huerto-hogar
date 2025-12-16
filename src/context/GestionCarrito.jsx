@@ -4,67 +4,89 @@ import ProductoService from '../services/ProductoService.js';
 const AlmacenCarrito = createContext();
 
 export const usarCarrito = () => {
-const store = useContext(AlmacenCarrito);
-if (!store) {
-    throw new Error('usarCarrito debe usarse dentro de un GestionCarritoProvider');
-}
-return store;
+    const store = useContext(AlmacenCarrito);
+    if (!store) {
+        throw new Error('usarCarrito debe usarse dentro de un GestionCarritoProvider');
+    }
+    return store;
 };
 
 export const GestionCarritoProvider = ({ children }) => {
+    const [articulosCarrito, setArticulosCarrito] = useState([]);
+    const [productosTienda, setProductosTienda] = useState([]);
 
-const [articulosCarrito, setArticulosCarrito] = useState([]);
+    useEffect(() => {
+        ProductoService.obtenerTodos()
+            .then((response) => {
+                setProductosTienda(response.data);
+            })
+            .catch((error) => {
+                console.error("Error al conectar con la API:", error);
+            });
+    }, []);
 
-const [productosTienda, setProductosTienda] = useState([]);
+    const agregarAlCarrito = (product, quantity = 1) => {
+        setArticulosCarrito((prevItems) => {
+            const itemExistente = prevItems.find((item) => item.product.id === product.id);
+            const esPeso = product.unidadMedida === 'KG';
 
-useEffect(() => {
-    ProductoService.obtenerTodos()
-    .then((response) => {
-        setProductosTienda(response.data);
-        console.log("Productos cargados:", response.data);
-    })
-    .catch((error) => {
-        console.error("Error al conectar con la API:", error);
-    });
-}, []);
+            if (itemExistente) {
+                return prevItems.map((item) => {
+                    if (item.product.id === product.id) {
+                        let nuevaCantidad = item.quantity + quantity;
 
+                        if (esPeso) {
+                            nuevaCantidad = parseFloat(nuevaCantidad.toFixed(3));
+                        } else {
+                            nuevaCantidad = Math.round(nuevaCantidad);
+                        }
+                        
+                        const stockMax = product.stock || 9999;
+                        const cantidadFinal = nuevaCantidad > stockMax ? stockMax : nuevaCantidad;
 
-const agregarAlCarrito = (product, quantity = 1) => {
-    setArticulosCarrito((prevItems) => {
-    const itemExistente = prevItems.find((item) => item.product.id === product.id);
-    if (itemExistente) {
-        return prevItems.map((item) =>
-        item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-    }
-    return [...prevItems, { product, quantity }];
-    });
-};
+                        return { ...item, quantity: cantidadFinal };
+                    }
+                    return item;
+                });
+            }
 
-const eliminarDelCarrito = (id) => {
-    setArticulosCarrito((prevItems) => prevItems.filter((item) => item.product.id !== id));
-};
+            let cantidadInicial = quantity;
+            if (!esPeso) {
+                cantidadInicial = Math.round(cantidadInicial);
+            }
 
-const finalizarCompra = () => {
-    setArticulosCarrito([]);
-};
+            return [...prevItems, { product, quantity: cantidadInicial }];
+        });
+    };
 
-const conteoArticulos = articulosCarrito.reduce((acc, item) => acc + item.quantity, 0);
+    const eliminarDelCarrito = (id) => {
+        setArticulosCarrito((prevItems) => prevItems.filter((item) => item.product.id !== id));
+    };
 
-const valorDelAlmacen = {
-    articulosCarrito,
-    productosTienda,
-    agregarAlCarrito,
-    eliminarDelCarrito,
-    finalizarCompra,
-    conteoArticulos,
-};
+    const finalizarCompra = () => {
+        setArticulosCarrito([]);
+    };
 
-return (
-    <AlmacenCarrito.Provider value={valorDelAlmacen}>
-    {children}
-    </AlmacenCarrito.Provider>
-);
+    const conteoArticulos = articulosCarrito.length;
+
+    const totalCarrito = articulosCarrito.reduce((acc, item) => {
+        const subtotal = Math.round(item.product.precio * item.quantity);
+        return acc + subtotal;
+    }, 0);
+
+    const valorDelAlmacen = {
+        articulosCarrito,
+        productosTienda,
+        agregarAlCarrito,
+        eliminarDelCarrito,
+        finalizarCompra,
+        conteoArticulos,
+        totalCarrito,
+    };
+
+    return (
+        <AlmacenCarrito.Provider value={valorDelAlmacen}>
+            {children}
+        </AlmacenCarrito.Provider>
+    );
 };

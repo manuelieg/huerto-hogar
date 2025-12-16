@@ -1,190 +1,165 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { usarCarrito } from "../context/GestionCarrito.jsx";
-import ProductoService from "../services/ProductoService.js";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import ProductoService from "../services/ProductoService";
+import { usarCarrito } from "../context/GestionCarrito";
 
-function DetalleProducto() {
+const DetalleProducto = () => {
 const { id } = useParams();
-const { agregarAlCarrito } = usarCarrito();
 const [producto, setProducto] = useState(null);
+const [loading, setLoading] = useState(true);
 const [cantidad, setCantidad] = useState(1);
-const [cargando, setCargando] = useState(true);
+const { agregarAlCarrito } = usarCarrito();
 
 useEffect(() => {
-    setCargando(true);
-    ProductoService.obtenerPorId(id)
-    .then((response) => {
-        setProducto(response.data);
-        setCargando(false);
-    })
-    .catch((error) => {
+    const fetchProducto = async () => {
+    try {
+        const res = await ProductoService.obtenerPorId(id);
+        setProducto(res.data);
+        if (res.data.unidadMedida === 'KG') {
+            setCantidad(0.25);
+        } else {
+            setCantidad(1);
+        }
+    } catch (error) {
         console.error("Error al cargar producto:", error);
-        setCargando(false);
-    });
+    } finally {
+        setLoading(false);
+    }
+    };
+    fetchProducto();
 }, [id]);
 
-const obtenerUnidad = (prod) => {
-    if (!prod) return "";
-    const nombre = prod.nombre?.toLowerCase() || "";
+if (loading) return <div className="text-center mt-5"><div className="spinner-border text-success"></div></div>;
+if (!producto) return <div className="text-center mt-5">Producto no encontrado</div>;
 
-    if (
-    nombre.includes("mantequilla") ||
-    nombre.includes("queso") ||
-    nombre.includes("quesillo")
-    ) {
-    return "g";
+const unidad = producto.unidadMedida || 'UNIDAD';
+const esPeso = unidad === 'KG';
+const step = esPeso ? 0.25 : 1;
+
+const incrementar = () => {
+    if (producto && cantidad < producto.stock) {
+    const nueva = cantidad + step;
+    setCantidad(esPeso ? parseFloat(nueva.toFixed(2)) : nueva);
     }
-    if (
-    nombre.includes("leche") ||
-    nombre.includes("yogurt") ||
-    nombre.includes("aceite") ||
-    nombre.includes("té") ||
-    nombre.includes("bebida") ||
-    nombre.includes("jugo")
-    ) {
-    return "ml";
-    }
-    return "kg";
 };
 
-function formatearPrecio(precio) {
-    return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    }).format(precio);
-}
+const decrementar = () => {
+    if (cantidad > step) {
+    const nueva = cantidad - step;
+    setCantidad(esPeso ? parseFloat(nueva.toFixed(2)) : nueva);
+    }
+};
 
-if (cargando) {
-    return (
-    <div className="container mt-5 text-center">
-        <div className="spinner-border text-success" role="status">
-        <span className="visually-hidden">Cargando...</span>
-        </div>
-        <p className="mt-2">Buscando tu producto...</p>
-    </div>
-    );
-}
+const handleAgregar = () => {
+    agregarAlCarrito(producto, cantidad);
+    const btn = document.getElementById('btn-add-detail');
+    if(btn) {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check-lg"></i> Agregado';
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-dark');
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.classList.remove('btn-dark');
+            btn.classList.add('btn-success');
+        }, 1500);
+    }
+};
 
-if (!producto) {
-    return (
-    <div className="container mt-5 text-center">
-        <h2>Producto no encontrado</h2>
-        <Link to="/productos" className="btn btn-primary mt-3">
-        Volver a la tienda
-        </Link>
-    </div>
-    );
-}
-
-const unidad = obtenerUnidad(producto);
+  const precioTotal = producto.precio * cantidad;
+const nombreCategoria = producto.categoria?.nombre || producto.categoria || "General";
 
 return (
     <div className="container mt-5 mb-5">
-    <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-        <li className="breadcrumb-item">
-            <Link to="/productos" className="text-decoration-none text-success">
-            Productos
-            </Link>
-        </li>
-        <li className="breadcrumb-item active text-dark" aria-current="page">
-            {producto.nombre}
-        </li>
-        </ol>
-    </nav>
-
-    <div className="card shadow-sm border-0 overflow-hidden">
-        <div className="row g-0">
-        <div className="col-md-6 d-flex align-items-center justify-content-center bg-light">
+    <div className="row g-5">
+        
+        <div className="col-md-6">
+        <div className="card border-0 shadow-sm p-3">
             <img
             src={producto.imagen || "/images/placeholder.png"}
             alt={producto.nombre}
-            className="img-fluid p-4"
-            style={{ maxHeight: "500px", objectFit: "contain" }}
+            className="img-fluid rounded"
+            style={{ objectFit: "contain", maxHeight: "450px", width: "100%" }}
             />
+        </div>
         </div>
 
         <div className="col-md-6">
-            <div className="card-body p-4 p-lg-5 d-flex flex-column h-100">
-            <h5
-                className="text-muted text-uppercase mb-2"
-                style={{ fontSize: "0.9rem", letterSpacing: "2px" }}
-            >
-                {producto.categoria?.nombre || "Sin Categoría"}
-            </h5>
+        <div className="ps-lg-4">
+            <span className="badge bg-light text-secondary border mb-2 text-uppercase ls-1">
+            {nombreCategoria}
+            </span>
 
-            <h1 className="display-5 fw-bolder mb-3">{producto.nombre}</h1>
-
-            <div className="mb-4">
-                <span className="display-6 fw-bold text-success me-3">
-                {formatearPrecio(producto.precio)} / {unidad}
-                </span>
-
-                <span
-                className={`badge rounded-pill fs-6 ${
-                    producto.stock > 0
-                    ? "bg-success-subtle text-success border border-success"
-                    : "bg-danger-subtle text-danger border border-danger"
-                }`}
-                >
-                {producto.stock > 0
-                    ? `Stock: ${producto.stock} ${unidad}`
-                    : "Agotado"}
-                </span>
+            <h1 className="fw-bold display-5 text-dark mb-2">{producto.nombre}</h1>
+            
+            <div className="mb-3">
+            <span className="h2 fw-bold text-success">
+                ${new Intl.NumberFormat("es-CL").format(producto.precio)}
+            </span>
+            <span className="text-muted ms-2">/ {unidad}</span>
             </div>
 
-            <p className="lead text-muted mb-4">{producto.descripcion}</p>
+            <p className="lead text-muted mb-4" style={{ fontSize: "1rem" }}>
+            {producto.descripcion || "Sin descripción disponible."}
+            </p>
 
-            <div className="mt-auto">
-                <div
-                className="d-flex align-items-center gap-3 mb-4"
-                style={{ maxWidth: "400px" }}
+            <div className="card bg-light border-0 rounded-3 p-4 mb-4">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <span className={`fw-bold ${producto.stock > 0 ? 'text-success' : 'text-danger'}`}>
+                    {producto.stock > 0 ? "Disponible" : "Agotado"}
+                </span>
+                <small className="text-muted">Stock: {producto.stock} {unidad}</small>
+            </div>
+
+            {producto.stock > 0 ? (
+                <>
+                <div className="d-flex align-items-center justify-content-between mb-4">
+                    <label className="fw-bold text-dark me-3">Cantidad:</label>
+                    
+                    <div className="input-group" style={{ width: "140px" }}>
+                        <button className="btn btn-outline-secondary bg-white" type="button" onClick={decrementar}>-</button>
+                        <input
+                        type="text"
+                        className="form-control text-center bg-white border-secondary border-start-0 border-end-0"
+                        value={cantidad}
+                        readOnly
+                        />
+                        <button className="btn btn-outline-secondary bg-white" type="button" onClick={incrementar}>+</button>
+                    </div>
+                </div>
+
+                <div className="d-flex justify-content-between align-items-center border-top pt-3 mb-3">
+                    <span>Total a pagar:</span>
+                    <span className="fs-4 fw-bold text-dark">
+                        ${new Intl.NumberFormat("es-CL").format(Math.round(precioTotal))}
+                    </span>
+                </div>
+
+                <button 
+                    id="btn-add-detail"
+                    className="btn btn-success btn-lg w-100 fw-bold shadow-sm transition-btn"
+                    onClick={handleAgregar}
                 >
-                <input
-                    type="number"
-                    className="form-control text-center fs-5"
-                    value={cantidad}
-                    min="1"
-                    max={producto.stock}
-                    onChange={(e) =>
-                    setCantidad(
-                        Math.max(
-                        1,
-                        Math.min(producto.stock, Number(e.target.value))
-                        )
-                    )
-                    }
-                    style={{ width: "80px" }}
-                    disabled={producto.stock <= 0}
-                />
-                <button
-                    className="btn btn-dark btn-lg flex-grow-1"
-                    onClick={() => agregarAlCarrito(producto, cantidad)}
-                    disabled={producto.stock <= 0}
-                >
-                    <i className="bi bi-cart-plus me-2"></i>
-                    {producto.stock > 0 ? "Añadir al Carrito" : "Sin Stock"}
+                    <i className="bi bi-cart-plus me-2"></i> Añadir al Carrito
                 </button>
+                </>
+            ) : (
+                <div className="alert alert-warning text-center m-0">
+                    Producto no disponible momentáneamente.
                 </div>
+            )}
+            </div>
 
-                <hr />
-                <div className="small text-muted">
-                <p className="mb-1">
-                    <i className="bi bi-truck me-2"></i>Despacho a todo Chile
-                </p>
-                <p className="mb-0">
-                    <i className="bi bi-shield-check me-2"></i>Garantía de
-                    calidad Huerto Hogar
-                </p>
-                </div>
+            <div className="small text-muted">
+                <p className="mb-1"><i className="bi bi-truck me-2"></i> Despacho a todo Santiago</p>
+                <p className="mb-0"><i className="bi bi-shield-check me-2"></i> Calidad garantizada de la huerta</p>
             </div>
-            </div>
+
         </div>
         </div>
     </div>
     </div>
 );
-}
+};
 
 export default DetalleProducto;

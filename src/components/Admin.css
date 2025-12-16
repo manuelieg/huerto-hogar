@@ -1,0 +1,71 @@
+
+.admin-background {
+    background-color: #f4f6f9;
+    min-height: 100vh;
+}
+
+.card-admin {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+
+.page-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+}
+
+.page-title {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    color: #343a40;
+    margin: 0;
+}
+
+.table-admin {
+    width: 100%;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.table-admin thead th {
+    background-color: #212529;
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    padding: 12px 15px;
+}
+
+.table-admin tbody td {
+    vertical-align: middle;
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+    color: #495057;
+}
+
+.table-admin tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.kpi-card {
+    border-left: 4px solid;
+    transition: transform 0.2s;
+}
+.kpi-card:hover {
+    transform: translateY(-3px);
+}
+.kpi-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+.kpi-label {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: #6c757d;
+}

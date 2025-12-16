@@ -25,7 +25,7 @@ const enviarFormulario = async (e) => {
     setEstado({ enviando: true, exito: false, error: null });
 
     try {
-    await axios.post("http://localhost:8080/api/contactos", datosFormulario);
+    await axios.post("/contactos", datosFormulario);
 
     setEstado({ enviando: false, exito: true, error: null });
     
